@@ -13,7 +13,7 @@ const GetAbbreviation = userInput => {
   const input=userInput.toLowerCase(); 
   switch(input) {
     default:
-      return userInput; 
+      return userInput.toUpperCase(); 
     case "alaska":
       return "AK";
     case "alabama":

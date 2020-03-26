@@ -19,7 +19,7 @@ class App extends React.Component {
       error: null,
       lookup: '',
       submitted: false,
-      // countryArray: [],
+      worldLookupArray: [],
 
       domesticLookup: '',
       domesticSubmitted: false,
@@ -53,15 +53,8 @@ class App extends React.Component {
       });
   };
   DomesticLoadData = () => {
-    // this.setState({loading: true});
     return axios
       .get(`${domesticURL}`)
-      // .then(result => {
-      //   this.setState({ 
-      //     loading: false,
-      //     error: false, 
-      //   })
-      // })
       .catch(error => {
         this.setState({
           error: `${error}`,
@@ -85,6 +78,7 @@ class App extends React.Component {
     this.setState({
       lookup: this.state.lookup,
       submitted: true,
+      worldLookupArray: this.state.worldLookupArray.concat(this.state.lookup),
     });
     event.preventDefault();
   }
@@ -106,10 +100,13 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          <p><strong>Worldwide</strong></p>
-          <p>cases: {this.state.cases}</p>
-          <p> deaths: {this.state.deaths}</p>
-          <p>recoveries: {this.state.recovered}</p>
+          <h4><strong>Virus Visualizer</strong></h4>
+          <div className='worldSummary'>
+            <p><strong>Worldwide data</strong></p>
+            <p>cases: {this.state.cases}</p>
+            <p> deaths: {this.state.deaths}</p>
+            <p>recoveries: {this.state.recovered}</p>
+          </div>
         </header>
         {/* international */}
         <div className="searchDiv">
@@ -119,13 +116,22 @@ class App extends React.Component {
             onChange={this.onChange}
             placeholder="Search nation"
           />
+          {/* 
           {
             this.state.submitted &&
             <Result
               name={this.state.lookup}
               countryArray={this.state.countryArray}
             />
-          }          
+          }      
+          */}
+          {
+            this.state.worldLookupArray.map( item =>
+              <Result
+                name={item}
+              />
+            )
+          }     
         </div>
         {/* domestic */}
         <div className="searchDiv">
@@ -136,12 +142,21 @@ class App extends React.Component {
             placeholder="Search state"
             array={this.state.domesticLookupArray}
           />
+          {/* 
           {
             this.state.domesticSubmitted &&
             <DomesticResult
               name={this.state.domesticLookup}
             />
-          }          
+          }         
+          */}
+          {
+            this.state.domesticLookupArray.map(item =>
+              <DomesticResult
+                name={item}
+              />  
+            )
+          }  
         </div>
       </div>
     );
@@ -175,27 +190,46 @@ class Result extends React.Component {
       active: null,
       critical: null,
       casesPerOneMillion: null,
-      // countryArray: [],
     };
-    this.LoadListData = this.LoadListData.bind(this);
+    this.LoadNationData = this.LoadNationData.bind(this);
   }
-  LoadListData = () => {
+  LoadNationData = () => {
     return axios
       .get(`${listData}` + '/' + `${this.props.name}`)
       .then(result => {
         this.setState({
+          country: result.data.country,
           cases: result.data.cases,
+          todayCases: result.data.todayCases,
+          deaths: result.data.deaths,
+          todayDeaths: result.data.todayDeaths,
+          recovered: result.data.recovered,
+          active: result.data.active,
+          critical: result.data.critical,
+          casesPerOneMillion: result.data.casesPerOneMillion,
+          deathsPerOneMillion: result.data.deathsPerOneMillion,
         })
       })
   }
   componentDidMount() {
-    this.LoadListData();
+    this.LoadNationData();
   }
 
   render() {
+    const { country, cases, todayCases, deaths, todayDeaths, recovered,
+    active, critical, casesPerOneMillion, deathsPerOneMillion
+    } = this.state; 
+    const deathRecoveryRatio = 100*(deaths/(deaths+recovered));
     return (
-      <div>
-        <p>{this.props.name} cases: {this.state.cases}</p>
+      <div className='DomesticResult'>
+        <p>{country} cases: {cases}</p>
+        <p>Cases today: {todayCases}</p>
+        <p>Deaths: {deaths}.</p>
+        <p>Deaths today: {todayDeaths}</p>
+        <p>Recoveries: {recovered}</p>
+        <p>Percentage of cases ending with death: {deathRecoveryRatio}</p>
+        <p>{this.state.active} active cases, {critical} of which are critical.</p>
+        <p>Cases per million: {casesPerOneMillion}</p>
       </div>
     );
   };
@@ -224,6 +258,7 @@ class DomesticResult extends React.Component {
       .then(result => {
         var state = result.data[0];
         this.setState({
+          state: abbr, 
           cases: state.positive,
           testedNegative: state.negative,
           pendingCases: state.pending,
@@ -244,12 +279,12 @@ class DomesticResult extends React.Component {
 
     const ratio = 100*(deaths/cases); 
     return (
-      <div>
+      <div className='DomesticResult'>
         <p>
-          As of {dateChecked} there are {cases} cases.
+          In "{this.state.state}", as of {dateChecked} there have been {cases} confirmed cases.
           </p>
         <p>
-          deaths: {deaths}
+          Deaths: {deaths}
         </p>
         <p>
           There have been {totalTested} tests, {cases} of which were confirmed cases.
