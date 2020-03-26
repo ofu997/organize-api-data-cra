@@ -116,15 +116,6 @@ class App extends React.Component {
             onChange={this.onChange}
             placeholder="Search nation"
           />
-          {/* 
-          {
-            this.state.submitted &&
-            <Result
-              name={this.state.lookup}
-              countryArray={this.state.countryArray}
-            />
-          }      
-          */}
           {
             this.state.worldLookupArray.map( item =>
               <Result
@@ -142,14 +133,6 @@ class App extends React.Component {
             placeholder="Search state"
             array={this.state.domesticLookupArray}
           />
-          {/* 
-          {
-            this.state.domesticSubmitted &&
-            <DomesticResult
-              name={this.state.domesticLookup}
-            />
-          }         
-          */}
           {
             this.state.domesticLookupArray.map(item =>
               <DomesticResult
