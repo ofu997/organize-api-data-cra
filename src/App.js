@@ -17,12 +17,13 @@ class App extends React.Component {
       deaths: "",
       recovered: "",
       error: null,
-      lookup: null,
+      lookup: '',
       submitted: false,
-      countryArray: [],
+      // countryArray: [],
 
-      domesticLookup: null,
+      domesticLookup: '',
       domesticSubmitted: false,
+      domesticLookupArray: [], 
     };
     this.LoadData = this.LoadData.bind(this);
     this.Submit = this.Submit.bind(this);
@@ -91,7 +92,9 @@ class App extends React.Component {
     this.setState({
       domesticLookup: this.state.domesticLookup,
       domesticSubmitted: true,
+      domesticLookupArray: this.state.domesticLookupArray.concat(this.state.domesticLookup), 
     });
+    console.log(this.state.domesticLookupArray);
     event.preventDefault();
   }
   componentDidMount() {
@@ -108,38 +111,37 @@ class App extends React.Component {
           <p> deaths: {this.state.deaths}</p>
           <p>recoveries: {this.state.recovered}</p>
         </header>
+        {/* international */}
         <div className="searchDiv">
           <Search
             onSubmit={this.Submit}
-            test="test"
             value={this.state.lookup}
             onChange={this.onChange}
             placeholder="Search nation"
           />
-        </div>
-
-        <div className="searchDiv">
-          <Search
-            onSubmit={this.DomesticSubmit}
-            value={this.state.domesticLookup}
-            onChange={this.DomesticOnChange}
-            placeholder="Search state"
-          />
-        </div>
-        <div className="displayResult">
           {
             this.state.submitted &&
             <Result
               name={this.state.lookup}
               countryArray={this.state.countryArray}
             />
-          }
+          }          
+        </div>
+        {/* domestic */}
+        <div className="searchDiv">
+          <Search
+            onSubmit={this.DomesticSubmit}
+            value={this.state.domesticLookup}
+            onChange={this.DomesticOnChange}
+            placeholder="Search state"
+            array={this.state.domesticLookupArray}
+          />
           {
             this.state.domesticSubmitted &&
             <DomesticResult
               name={this.state.domesticLookup}
             />
-          }
+          }          
         </div>
       </div>
     );
@@ -153,6 +155,7 @@ const Search = (props) =>
       placeholder={props.placeholder}
       value={props.value}
       onChange={props.onChange}
+      array={props.array}
     />
     <button type="submit">
       Submit
@@ -216,7 +219,6 @@ class DomesticResult extends React.Component {
   }
   LoadStateData = () => {
     const abbr = GetAbbreviation(this.props.name);
-    // console.log(abbr);
     return axios
       .get(`${domesticURL}${latestFromDomesticState}${abbr}`)
       .then(result => {
@@ -230,8 +232,6 @@ class DomesticResult extends React.Component {
           totalTested: state.total,
           dateChecked: state.dateChecked,
         });
-        console.log(result.data[0].positive);
-        console.log(`${domesticURL}${latestFromDomesticState}${this.props.name}`);
       })
   }
   componentDidMount() {
@@ -241,6 +241,8 @@ class DomesticResult extends React.Component {
   render() {
     const { cases, testedNegative, pendingCases, hospitalized,
       deaths, totalTested, dateChecked } = this.state;
+
+    const ratio = 100*(deaths/cases); 
     return (
       <div>
         <p>
@@ -253,13 +255,20 @@ class DomesticResult extends React.Component {
           There have been {totalTested} tests, {cases} of which were confirmed cases.
           </p>
         <p>
-          {testedNegative} tested negative, and {pendingCases} tests are pending.
+          {testedNegative} tested negative.
           </p>
         {
           hospitalized ?
             <p>{hospitalized} are hospitalized. </p>
             : null
         }
+        {
+          pendingCases?
+          <p>{pendingCases} are pending</p>
+          : null
+        }
+        {/* int parse? */}
+        <p>Deaths per cases percentage: {ratio}</p>
       </div>
     );
   };

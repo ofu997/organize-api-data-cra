@@ -14,7 +14,7 @@ const GetAbbreviation = userInput => {
   switch(input) {
     default:
       return userInput; 
-    case "arkansas":
+    case "alaska":
       return "AK";
     case "alabama":
       return "AL";
