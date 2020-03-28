@@ -1,7 +1,8 @@
 import React from 'react';
 import './App.css';
-
 import axios from 'axios';
+import { Grid } from 'semantic-ui-react';
+import 'semantic-ui-css/semantic.min.css';
 import {
   requestURL, summary, listData,
   domesticURL, latestFromDomesticState, domesticStateAbbreviation,
@@ -98,48 +99,58 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h4><strong>Virus Visualizer</strong></h4>
-          <div className='worldSummary'>
-            <p><strong>Worldwide data</strong></p>
-            <p>cases: {this.state.cases}</p>
-            <p> deaths: {this.state.deaths}</p>
-            <p>recoveries: {this.state.recovered}</p>
-          </div>
-        </header>
-        {/* international */}
-        <div className="searchDiv">
-          <Search
-            onSubmit={this.Submit}
-            value={this.state.lookup}
-            onChange={this.onChange}
-            placeholder="Search nation"
-          />
-          {
-            this.state.worldLookupArray.map( item =>
-              <Result
-                name={item}
-              />
-            )
-          }     
-        </div>
-        {/* domestic */}
-        <div className="searchDiv">
-          <Search
-            onSubmit={this.DomesticSubmit}
-            value={this.state.domesticLookup}
-            onChange={this.DomesticOnChange}
-            placeholder="Search state"
-            array={this.state.domesticLookupArray}
-          />
-          {
-            this.state.domesticLookupArray.map(item =>
-              <DomesticResult
-                name={item}
-              />  
-            )
-          }  
+      <div>
+        <div className="App">
+          <header className="App-header">
+            <h2><strong>Virus Visualizer</strong></h2>
+            <div className='worldSummary'>
+              <p><strong>Worldwide data</strong></p>
+              <p>cases: {this.state.cases} &nbsp;&nbsp;&nbsp;deaths: {this.state.deaths}&nbsp;&nbsp;&nbsp;recoveries: {this.state.recovered}</p>
+            </div>
+          </header>
+        </div> 
+        <div className="mainContent">
+          <Grid doubling columns='two'>
+            <Grid.Row>
+              {/* international */}
+              <Grid.Column className='column'>
+                <div className="searchDiv">
+                  <Search
+                    onSubmit={this.Submit}
+                    value={this.state.lookup}
+                    onChange={this.onChange}
+                    placeholder="Search nation"
+                  />
+                  {
+                    this.state.worldLookupArray.map( item =>
+                      <Result
+                        name={item}
+                      />
+                    )
+                  }     
+                </div>
+              </Grid.Column>
+              {/* domestic */}
+              <Grid.Column>
+                <div className="searchDiv">
+                  <Search
+                    onSubmit={this.DomesticSubmit}
+                    value={this.state.domesticLookup}
+                    onChange={this.DomesticOnChange}
+                    placeholder="Search state"
+                    array={this.state.domesticLookupArray}
+                  />
+                  {
+                    this.state.domesticLookupArray.map(item =>
+                      <DomesticResult
+                        name={item}
+                      />  
+                    )
+                  }  
+                </div>
+              </Grid.Column>
+              </Grid.Row>
+            </Grid>          
         </div>
       </div>
     );
@@ -210,8 +221,8 @@ class Result extends React.Component {
         <p>Deaths: {deaths}.</p>
         <p>Deaths today: {todayDeaths}</p>
         <p>Recoveries: {recovered}</p>
-        <p>Percentage of cases ending with death: {deathRecoveryRatio}</p>
-        <p>{this.state.active} active cases, {critical} of which are critical.</p>
+        <p>Deaths/(Deaths+Recoveries) percentage: {deathRecoveryRatio}</p>
+        <p>{active} active cases, {critical} of which are critical.</p>
         <p>Cases per million: {casesPerOneMillion}</p>
       </div>
     );
@@ -270,7 +281,7 @@ class DomesticResult extends React.Component {
           Deaths: {deaths}
         </p>
         <p>
-          There have been {totalTested} tests, {cases} of which were confirmed cases.
+          There have been {totalTested} tests.
           </p>
         <p>
           {testedNegative} tested negative.
@@ -286,7 +297,7 @@ class DomesticResult extends React.Component {
           : null
         }
         {/* int parse? */}
-        <p>Deaths per cases percentage: {ratio}</p>
+        <p>Deaths per confirmed cases percentage: {ratio}</p>
       </div>
     );
   };
