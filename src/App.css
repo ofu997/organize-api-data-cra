@@ -60,7 +60,7 @@ p {
 }
 
 .DomesticResult {
-  border: 1pt solid #474a52;
+  border: 0.25pt solid #474a52;
   border-radius: 1em;
   margin: 0.2em 0.1em;
   /* max-width: 80%; */
@@ -72,7 +72,7 @@ p {
   border: 2pt solid #2F3418;
   border-radius: 1em;
   margin: 0.2em 4em;
-   max-width: 80%; 
+  max-width: 80%; 
   /* padding: 0.25em 1em;
   font-size: 1.5em; 
 } */

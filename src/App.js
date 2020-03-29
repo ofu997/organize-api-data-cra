@@ -8,6 +8,9 @@ import {
   domesticURL, latestFromDomesticState, domesticStateAbbreviation,
   GetAbbreviation,
 } from './constants';
+import { BarChart, LineChart, Line, CartesianGrid, 
+  XAxis, YAxis, Tooltip, Legend, Bar } from 'recharts'; 
+
 
 class App extends React.Component {
   constructor(props) {
@@ -125,6 +128,7 @@ class App extends React.Component {
                     this.state.worldLookupArray.map( item =>
                       <Result
                         name={item}
+                        key={item}
                       />
                     )
                   }     
@@ -155,7 +159,7 @@ class App extends React.Component {
       </div>
     );
   }
-}
+} // App
 
 const Search = (props) =>
   <form onSubmit={props.onSubmit}>
@@ -213,6 +217,7 @@ class Result extends React.Component {
     const { country, cases, todayCases, deaths, todayDeaths, recovered,
     active, critical, casesPerOneMillion, deathsPerOneMillion
     } = this.state; 
+    const data = [{name: country, cases: cases,  cases_today: todayCases}];
     const deathRecoveryRatio = 100*(deaths/(deaths+recovered));
     return (
       <div className='DomesticResult'>
@@ -224,6 +229,19 @@ class Result extends React.Component {
         <p>Deaths/(Deaths+Recoveries) percentage: {deathRecoveryRatio}</p>
         <p>{active} active cases, {critical} of which are critical.</p>
         <p>Cases per million: {casesPerOneMillion}</p>
+
+        <BarChart width={450} height={300} data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          {/* <YAxis /> */}
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="cases" fill="#8884d8" />
+          <Bar dataKey="cases_today" fill="#82ca9d" />
+        </BarChart>        
+
+        <hr></hr>
       </div>
     );
   };
@@ -298,6 +316,8 @@ class DomesticResult extends React.Component {
         }
         {/* int parse? */}
         <p>Deaths per confirmed cases percentage: {ratio}</p>
+
+        <hr />
       </div>
     );
   };
