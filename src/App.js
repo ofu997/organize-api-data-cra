@@ -24,6 +24,8 @@ class App extends React.Component {
       lookup: '',
       submitted: false,
       worldLookupArray: [],
+      timelineCases: [],
+      timelineDeaths: [], 
 
       domesticLookup: '',
       domesticSubmitted: false,
@@ -188,8 +190,12 @@ class Result extends React.Component {
       active: null,
       critical: null,
       casesPerOneMillion: null,
+
+      timelineCases: [],
+      timelineDeaths: [], 
     };
     this.LoadNationData = this.LoadNationData.bind(this);
+    this.LoadTimeLineCases = this.LoadTimeLineCases.bind(this); 
   }
   LoadNationData = () => {
     return axios
@@ -209,18 +215,55 @@ class Result extends React.Component {
         })
       })
   }
+  LoadTimeLineCases = () => {
+    return axios
+      .get(`${requestURL}`+'/v2/historical/'+`${this.props.name}`)
+      .then(
+        result => {
+          this.setState({
+            timelineCases: result.data.timeline.cases, 
+            timelineDeaths: result.data.timeline.deaths, 
+          })
+          this.GraphData(result.data.timeline.cases, result.data.timeline.deaths);  
+        },
+      );
+  }
+  GraphData = (cases, deaths) => {
+    const dataCases = []; 
+    const dataDeaths = []; 
+    let keys = Object.keys(cases);
+    let keysOfDeath=Object.keys(deaths); 
+    for ( let i = keys.length-1; i > keys.length-31; i-- ) {
+      var obj = new Object();
+      obj.date = keys[i];
+      obj.cases = cases[keys[i]];
+      dataCases.push(obj);
+    }    
+    for ( let i = keysOfDeath.length-1; i > keysOfDeath.length-31; i-- ) {
+      var deathObj = new Object(); 
+      deathObj.date = keysOfDeath[i];
+      deathObj.deaths = deaths[keysOfDeath[i]]; 
+      dataDeaths.push(deathObj); 
+    }    
+    this.setState({
+      timelineCases: dataCases,
+      timelineDeaths: dataDeaths,
+    })
+  }
   componentDidMount() {
     this.LoadNationData();
+    this.LoadTimeLineCases(); 
   }
 
   render() {
     const { country, cases, todayCases, deaths, todayDeaths, recovered,
-    active, critical, casesPerOneMillion, deathsPerOneMillion
+    active, critical, casesPerOneMillion, deathsPerOneMillion, timelineCases, timelineDeaths,
     } = this.state; 
     const data = [{name: country, cases: cases,  cases_today: todayCases}];
     const deathRecoveryRatio = 100*(deaths/(deaths+recovered));
+
     return (
-      <div className='DomesticResult'>
+      <div className='Result'>
         <p>{country} cases: {cases}</p>
         <p>Cases today: {todayCases}</p>
         <p>Deaths: {deaths}.</p>
@@ -230,22 +273,39 @@ class Result extends React.Component {
         <p>{active} active cases, {critical} of which are critical.</p>
         <p>Cases per million: {casesPerOneMillion}</p>
 
-        <BarChart width={450} height={300} data={data}>
+        {/* <BarChart width={225} height={150} data={data} className='ChartFont'>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          {/* <YAxis /> */}
           <Tooltip />
           <Legend />
-          <Bar dataKey="cases" fill="#8884d8" />
-          <Bar dataKey="cases_today" fill="#82ca9d" />
-        </BarChart>        
+          <Bar dataKey="cases" fill="#a9aaad" />
+          <Bar dataKey="cases_today" fill="#282c34" />
+        </BarChart>  */}
+
+        <LineChart data={timelineDeaths} layout="vertical" width={300} height={300} className='ChartFont LineChart'>
+          <CartesianGrid strokeDasharray="3 3"/>
+          <XAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
+          <YAxis dataKey="date" type='category'/>
+          <Tooltip/>
+          <Legend />
+          <Line dataKey="deaths" stroke="#8884d8" />
+        </LineChart>          
+
+        <LineChart layout="vertical" width={300} height={300} className='ChartFont' data={timelineCases}>
+          <CartesianGrid strokeDasharray="3 3"/>
+          <XAxis type="number" domain={[0, dataMax => (dataMax *1.25)]} />
+          <YAxis dataKey="date" type='category'/>
+          <Tooltip/>
+          <Legend />
+          <Line dataKey="cases" stroke="#8884d8" />
+        </LineChart>              
 
         <hr></hr>
       </div>
     );
   };
-}
+} // Result
 
 class DomesticResult extends React.Component {
   constructor(props) {
@@ -291,7 +351,7 @@ class DomesticResult extends React.Component {
 
     const ratio = 100*(deaths/cases); 
     return (
-      <div className='DomesticResult'>
+      <div className='Result'>
         <p>
           In "{this.state.state}", as of {dateChecked} there have been {cases} confirmed cases.
           </p>
@@ -305,15 +365,16 @@ class DomesticResult extends React.Component {
           {testedNegative} tested negative.
           </p>
         {
+          pendingCases?
+          <p>{pendingCases} are pending</p>
+          : null
+        }          
+        {
           hospitalized ?
             <p>{hospitalized} are hospitalized. </p>
             : null
         }
-        {
-          pendingCases?
-          <p>{pendingCases} are pending</p>
-          : null
-        }
+
         {/* int parse? */}
         <p>Deaths per confirmed cases percentage: {ratio}</p>
 
@@ -321,6 +382,6 @@ class DomesticResult extends React.Component {
       </div>
     );
   };
-}
+} // DomesticResult
 
 export default App;

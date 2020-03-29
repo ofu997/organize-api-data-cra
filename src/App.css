@@ -59,13 +59,22 @@ p {
   margin: 0px 20px;
 }
 
-.DomesticResult {
-  border: 0.25pt solid #474a52;
+.Result {
+  /* border: 0.25pt solid #474a52; */
   border-radius: 1em;
-  margin: 0.2em 0.1em;
+  margin: 0em 0.1em;
   /* max-width: 80%; */
   padding: 0.5em 1em;
-  font-size: 1.5em;
+  font-size: 1.25em;
+  /* line-height: 4px; */
+}
+
+.ChartFont {
+  font-size: 0.67em;;
+}
+
+.LineChart {
+  margin: 1em 1em; 
 }
 
 /* .WorldResult {
