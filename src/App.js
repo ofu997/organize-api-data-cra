@@ -11,7 +11,6 @@ import {
 import { BarChart, LineChart, Line, CartesianGrid, 
   XAxis, YAxis, Tooltip, Legend, Bar } from 'recharts'; 
 
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -81,18 +80,20 @@ class App extends React.Component {
     })
   }
   Submit = (event) => {
+    const newNation=[this.state.lookup];
     this.setState({
       lookup: this.state.lookup,
       submitted: true,
-      worldLookupArray: this.state.worldLookupArray.concat(this.state.lookup),
+      worldLookupArray: newNation.concat(this.state.worldLookupArray),
     });
     event.preventDefault();
   }
   DomesticSubmit = (event) => {
+    const newState=[this.state.domesticLookup];
     this.setState({
       domesticLookup: this.state.domesticLookup,
       domesticSubmitted: true,
-      domesticLookupArray: this.state.domesticLookupArray.concat(this.state.domesticLookup), 
+      domesticLookupArray: newState.concat(this.state.domesticLookupArray),  
     });
     console.log(this.state.domesticLookupArray);
     event.preventDefault();
@@ -127,7 +128,7 @@ class App extends React.Component {
                     placeholder="Search nation"
                   />
                   {
-                    this.state.worldLookupArray.map( item =>
+                    this.state.worldLookupArray.map(item =>
                       <Result
                         name={item}
                         key={item}
@@ -144,12 +145,13 @@ class App extends React.Component {
                     value={this.state.domesticLookup}
                     onChange={this.DomesticOnChange}
                     placeholder="Search state"
-                    array={this.state.domesticLookupArray}
+                    // array={this.state.domesticLookupArray}
                   />
                   {
                     this.state.domesticLookupArray.map(item =>
                       <DomesticResult
                         name={item}
+                        key={item}
                       />  
                     )
                   }  
@@ -233,13 +235,13 @@ class Result extends React.Component {
     const dataDeaths = []; 
     let keys = Object.keys(cases);
     let keysOfDeath=Object.keys(deaths); 
-    for ( let i = keys.length-1; i > keys.length-31; i-- ) {
+    for ( let i = keys.length-1; i > -1; i-- ) {
       var obj = new Object();
       obj.date = keys[i];
       obj.cases = cases[keys[i]];
       dataCases.push(obj);
     }    
-    for ( let i = keysOfDeath.length-1; i > keysOfDeath.length-31; i-- ) {
+    for ( let i = keysOfDeath.length-1; i > -1; i-- ) {
       var deathObj = new Object(); 
       deathObj.date = keysOfDeath[i];
       deathObj.deaths = deaths[keysOfDeath[i]]; 
