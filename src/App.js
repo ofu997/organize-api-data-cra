@@ -106,6 +106,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
+
         <div className="App">
           <header className="App-header">
             <h3><strong>Virus Visualizer</strong></h3>
@@ -165,8 +166,8 @@ class App extends React.Component {
 
         <div className='sort'>
           <Sort/>
-
         </div>
+
       </div> 
     );
   }
@@ -271,6 +272,7 @@ class Result extends React.Component {
     active, critical, casesPerOneMillion, deathsPerOneMillion, timelineCases, timelineDeaths,
     } = this.state; 
     const deathPercentIncrease=((this.state.todayDeaths/(this.state.deaths-this.state.todayDeaths))*100).toFixed(2); 
+    const casesPercentIncrease=((this.state.todayCases/(this.state.cases-this.state.todayCases))*100).toFixed(2);
     const deathRecoveryRatio = (100*(deaths/(deaths+recovered))).toFixed(2);
 
     return (
@@ -287,6 +289,7 @@ class Result extends React.Component {
             <Grid.Column>
               <p>{country} cases: {cases}</p>
               <p>Cases today: {todayCases}</p>          
+              <p>Daily increase in cases: <strong>{casesPercentIncrease}%</strong></p>               
               <p>{active} active cases, {critical} of which are critical.</p>
               <p>Cases per million: {casesPerOneMillion}</p>
             </Grid.Column>
@@ -366,13 +369,13 @@ class DomesticResult extends React.Component {
   }
 
   render() {
-    const { cases, testedNegative, pendingCases, hospitalized,
+    const { state, cases, testedNegative, pendingCases, hospitalized,
       deaths, totalTested, readableDateChecked } = this.state;
     const ratio = (100*(deaths/cases)).toFixed(2); 
     return (
       <div className='Result'>
         <p>
-          In "{this.state.state}", as of { readableDateChecked } there have been {cases} confirmed cases.
+          In "{state}", as of { readableDateChecked } there have been {cases} confirmed cases.
           </p>
         <p>
           Deaths: {deaths}
@@ -393,8 +396,6 @@ class DomesticResult extends React.Component {
             <p>{hospitalized} are hospitalized. </p>
             : null
         }
-
-        {/* int parse? */}
         <p>Deaths per confirmed cases percentage: {ratio}</p>
 
         <hr />
@@ -407,23 +408,35 @@ class Sort extends React.Component {
   constructor(props) {
     super(props);
     this.state={
+      submitted: false,
       value: '',
       sortedData: [], 
+      dataKey: '', 
     };
     this.Change=this.Change.bind(this);
     this.Submit=this.Submit.bind(this); 
     this.LoadSortData=this.LoadSortData.bind(this); 
   }
   Change(event) {
-    this.setState({value: event.target.value});
+    this.setState({
+      value: event.target.value,
+      submitted: false, 
+    });
   }
   Submit(event) {
     event.preventDefault(); 
+    if (this.state.value==''){
+      return;
+    }
+    this.setState({
+      submitted: true, 
+    });
     this.LoadSortData(); 
-    // alert('picked'+this.state.value); 
+    // this.renderChart(); 
   }
   LoadSortData = () => {
     console.log(this.state.value);
+    console.log(this.state.submitted);
     return axios
       .get(`${requestURL}` + '/countries?sort=' + `${this.state.value}`)
       .then(result => {
@@ -435,32 +448,20 @@ class Sort extends React.Component {
       sortedData: data, 
     })
   }
-
+  componentDidMount() {
+    this.LoadSortData();
+  }
+  
   render() {
-    console.log(this.state.sortedData);
-    const options = [
-      {key: 1, value: "cases", text:"cases"},
-      {key:2,value:"todayCases",text:"cases today"},
-      {key:3,value:"deaths",text:"deaths"},
-      {key:4,value:"todayDeaths",text:"deaths today"},
-      {key:5,value:"recovered",text:"recoveries"},
-      {key:6,value:"active",text:"active cases"},
-      {key:7,value:"critical",text: "critical cases"},
-      {key:8,value:"casesPerOneMillion",text:"cases per one million"},
-      {key:9,value:"deathsPerOneMillion",text:"deaths per one million"},
-    ];
+    const { value, submitted, sortedData } = this.state; 
+    // const chart; 
+    // console.log(this.state.sortedData);
     return (
       <div id='parentElementSort'>
         <form onSubmit={this.Submit}>
           <label>Sort by</label>
-          {/* <Select 
-            placeholder='Sort by...'
-            options={options}
-            onSubmit={this.Submit}
-            value={this.state.value}
-            onChange={this.Change}  
-          /> */}
           <select value={this.state.value} onChange={this.Change}>
+            <option value=""></option>
             <option value="cases">cases</option>
             <option value="todayCases">cases today</option>
             <option value="deaths">deaths</option>
@@ -473,8 +474,20 @@ class Sort extends React.Component {
           </select>
           <input type='submit' value='Submit' />
         </form> 
-
-
+        {
+          submitted &&           
+          // <div>
+          //   {this.renderChart()}
+          // </div>
+          <BarChart width={1500} height={500} data={sortedData} className='ChartFont'>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="country"/>
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey={value} fill="#8884d8" />
+          </BarChart>   
+        }
       </div>
     );
   }

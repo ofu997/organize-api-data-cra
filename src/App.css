@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  max-width: 1500px;
   /* align-content: center; */
 }
 
@@ -21,6 +22,7 @@
   color: white;
   padding-top: 1em;
   width: 100%;
+  max-width: 1500px;
 }
 
 p {
