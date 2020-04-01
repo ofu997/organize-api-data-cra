@@ -26,11 +26,13 @@
 p {
   /* max-height: 12px; */
   /* margin: 5px 0px; */
-  font-size: 0.7em;
+  font-size: 1em;
 }
 
 .worldSummary {
   margin: 1.5em 0em;
+  font-weight: 200;
+  font-size: 0.5em;
 }
 
 .App-link {
@@ -59,7 +61,17 @@ p {
   margin: 0px 20px;
 }
 
-.Result {
+.WorldResult {
+  /* border: 0.25pt solid #474a52; */
+  border-radius: 1em;
+  margin: 0em 0.1em;
+  /* max-width: 45%;  */
+  padding: 0.5em 1em;
+  /* font-size: 1.25em; */
+  /* line-height: 4px; */
+}
+
+.DomesticResult {
   /* border: 0.25pt solid #474a52; */
   border-radius: 1em;
   margin: 0em 0.1em;
@@ -69,12 +81,26 @@ p {
   /* line-height: 4px; */
 }
 
+.Chart {
+  margin: 1em 11em 0em 0em;
+}
+
+
 .ChartFont {
   font-size: 0.67em;;
 }
-
-.LineChart {
+/* .LineChart {
   margin: 1em 1em; 
+} */
+
+.sort {
+  margin: 4em auto 1em auto;
+  width: 80%;
+}
+
+#columnWrap {
+  line-height: 0.6em;
+  margin: 0em 0em; 
 }
 
 /* .WorldResult {
@@ -90,8 +116,8 @@ p {
   background-color: #53565d;
 } */
 
-/* .column {
-  column-width: 500px;
+/* .gridColumn {
+  margin-right: 1em; 
 }  */
 
 /* .row {

@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import axios from 'axios';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Button, Select } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import {
   requestURL, summary, listData,
@@ -108,14 +108,16 @@ class App extends React.Component {
       <div>
         <div className="App">
           <header className="App-header">
-            <h2><strong>Virus Visualizer</strong></h2>
+            <h3><strong>Virus Visualizer</strong></h3>
             <div className='worldSummary'>
               <p><strong>Worldwide data</strong></p>
               <p>cases: {this.state.cases} &nbsp;&nbsp;&nbsp;deaths: {this.state.deaths}&nbsp;&nbsp;&nbsp;recoveries: {this.state.recovered}</p>
             </div>
           </header>
         </div> 
-        <div className="mainContent">
+
+
+        <div>
           <Grid doubling columns='two'>
             <Grid.Row>
               {/* international */}
@@ -145,7 +147,6 @@ class App extends React.Component {
                     value={this.state.domesticLookup}
                     onChange={this.DomesticOnChange}
                     placeholder="Search state"
-                    // array={this.state.domesticLookupArray}
                   />
                   {
                     this.state.domesticLookupArray.map(item =>
@@ -160,23 +161,31 @@ class App extends React.Component {
               </Grid.Row>
             </Grid>          
         </div>
-      </div>
+
+
+        <div className='sort'>
+          <Sort/>
+
+        </div>
+      </div> 
     );
   }
 } // App
 
 const Search = (props) =>
   <form onSubmit={props.onSubmit}>
-    <input
-      type="text"
-      placeholder={props.placeholder}
-      value={props.value}
-      onChange={props.onChange}
-      array={props.array}
-    />
-    <button type="submit">
-      Submit
-    </button>
+    <div>
+      <input
+        type="text"
+        placeholder={props.placeholder}
+        value={props.value}
+        onChange={props.onChange}
+        array={props.array}
+      />
+      <Button basic compact size='mini' color='black' attached='right' type="submit">
+        Submit
+      </Button>
+    </div>
   </form>
 
 class Result extends React.Component {
@@ -261,49 +270,57 @@ class Result extends React.Component {
     const { country, cases, todayCases, deaths, todayDeaths, recovered,
     active, critical, casesPerOneMillion, deathsPerOneMillion, timelineCases, timelineDeaths,
     } = this.state; 
-    const data = [{name: country, cases: cases,  cases_today: todayCases}];
-    const deathRecoveryRatio = 100*(deaths/(deaths+recovered));
+    const deathPercentIncrease=((this.state.todayDeaths/(this.state.deaths-this.state.todayDeaths))*100).toFixed(2); 
+    const deathRecoveryRatio = (100*(deaths/(deaths+recovered))).toFixed(2);
 
     return (
-      <div className='Result'>
-        <p>{country} cases: {cases}</p>
-        <p>Cases today: {todayCases}</p>
-        <p>Deaths: {deaths}.</p>
-        <p>Deaths today: {todayDeaths}</p>
-        <p>Recoveries: {recovered}</p>
-        <p>Deaths/(Deaths+Recoveries) percentage: {deathRecoveryRatio}</p>
-        <p>{active} active cases, {critical} of which are critical.</p>
-        <p>Cases per million: {casesPerOneMillion}</p>
+      <div className="WorldResult">
+        <Grid doubling columns='two'>
+          <Grid.Row>
+            <Grid.Column>
+              <p>Deaths: {deaths}.</p>
+              <p>Deaths today: {todayDeaths}</p>
+              <p>Daily increase in death: <strong>{deathPercentIncrease}%</strong></p> 
+              <p>Recoveries: {recovered}</p>
+              <p><sup>Deaths</sup>&frasl;<sub>Deaths+Recoveries</sub>: {deathRecoveryRatio}</p>
+            </Grid.Column>
+            <Grid.Column>
+              <p>{country} cases: {cases}</p>
+              <p>Cases today: {todayCases}</p>          
+              <p>{active} active cases, {critical} of which are critical.</p>
+              <p>Cases per million: {casesPerOneMillion}</p>
+            </Grid.Column>
 
-        {/* <BarChart width={225} height={150} data={data} className='ChartFont'>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="cases" fill="#a9aaad" />
-          <Bar dataKey="cases_today" fill="#282c34" />
-        </BarChart>  */}
+      
+          </Grid.Row>
+        </Grid>
+        <Grid>
+          <Grid columns='one'>
+            <Grid.Row>
+              <div className='Chart'>
+                <LineChart data={timelineDeaths} layout="vertical" width={300} height={300} className='ChartFont'>
+                  <CartesianGrid strokeDasharray="3 3"/>
+                  <XAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
+                  <YAxis dataKey="date" type='category'/>
+                  <Tooltip/>
+                  <Legend />
+                  <Line dataKey="deaths" stroke="#8884d8" />
+                </LineChart>          
 
-        <LineChart data={timelineDeaths} layout="vertical" width={300} height={300} className='ChartFont LineChart'>
-          <CartesianGrid strokeDasharray="3 3"/>
-          <XAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
-          <YAxis dataKey="date" type='category'/>
-          <Tooltip/>
-          <Legend />
-          <Line dataKey="deaths" stroke="#8884d8" />
-        </LineChart>          
+                <LineChart layout="vertical" width={300} height={300} className='ChartFont' data={timelineCases}>
+                  <CartesianGrid strokeDasharray="3 3"/>
+                  <XAxis type="number" domain={[0, dataMax => (dataMax *1.25)]} />
+                  <YAxis dataKey="date" type='category'/>
+                  <Tooltip/>
+                  <Legend />
+                  <Line dataKey="cases" stroke="#8884d8" />
+                </LineChart>              
+                <hr></hr>
+              </div>      
+            </Grid.Row>
+          </Grid>
+        </Grid>
 
-        <LineChart layout="vertical" width={300} height={300} className='ChartFont' data={timelineCases}>
-          <CartesianGrid strokeDasharray="3 3"/>
-          <XAxis type="number" domain={[0, dataMax => (dataMax *1.25)]} />
-          <YAxis dataKey="date" type='category'/>
-          <Tooltip/>
-          <Legend />
-          <Line dataKey="cases" stroke="#8884d8" />
-        </LineChart>              
-
-        <hr></hr>
       </div>
     );
   };
@@ -320,6 +337,7 @@ class DomesticResult extends React.Component {
       hospitalized: null,
       deaths: null,
       dateChecked: null,
+      readableDateChecked: null, 
       totalTested: null,
       allData: null,
     };
@@ -339,7 +357,7 @@ class DomesticResult extends React.Component {
           hospitalized: state.hospitalized,
           deaths: state.death,
           totalTested: state.total,
-          dateChecked: state.dateChecked,
+          readableDateChecked: state.dateChecked.replace("T", " ").replace(":00Z", " "), 
         });
       })
   }
@@ -349,13 +367,12 @@ class DomesticResult extends React.Component {
 
   render() {
     const { cases, testedNegative, pendingCases, hospitalized,
-      deaths, totalTested, dateChecked } = this.state;
-
-    const ratio = 100*(deaths/cases); 
+      deaths, totalTested, readableDateChecked } = this.state;
+    const ratio = (100*(deaths/cases)).toFixed(2); 
     return (
       <div className='Result'>
         <p>
-          In "{this.state.state}", as of {dateChecked} there have been {cases} confirmed cases.
+          In "{this.state.state}", as of { readableDateChecked } there have been {cases} confirmed cases.
           </p>
         <p>
           Deaths: {deaths}
@@ -385,5 +402,82 @@ class DomesticResult extends React.Component {
     );
   };
 } // DomesticResult
+
+class Sort extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state={
+      value: '',
+      sortedData: [], 
+    };
+    this.Change=this.Change.bind(this);
+    this.Submit=this.Submit.bind(this); 
+    this.LoadSortData=this.LoadSortData.bind(this); 
+  }
+  Change(event) {
+    this.setState({value: event.target.value});
+  }
+  Submit(event) {
+    event.preventDefault(); 
+    this.LoadSortData(); 
+    // alert('picked'+this.state.value); 
+  }
+  LoadSortData = () => {
+    console.log(this.state.value);
+    return axios
+      .get(`${requestURL}` + '/countries?sort=' + `${this.state.value}`)
+      .then(result => {
+        this.GraphSortedData(result.data);
+      })
+  }
+  GraphSortedData = (data) => {
+    this.setState({
+      sortedData: data, 
+    })
+  }
+
+  render() {
+    console.log(this.state.sortedData);
+    const options = [
+      {key: 1, value: "cases", text:"cases"},
+      {key:2,value:"todayCases",text:"cases today"},
+      {key:3,value:"deaths",text:"deaths"},
+      {key:4,value:"todayDeaths",text:"deaths today"},
+      {key:5,value:"recovered",text:"recoveries"},
+      {key:6,value:"active",text:"active cases"},
+      {key:7,value:"critical",text: "critical cases"},
+      {key:8,value:"casesPerOneMillion",text:"cases per one million"},
+      {key:9,value:"deathsPerOneMillion",text:"deaths per one million"},
+    ];
+    return (
+      <div id='parentElementSort'>
+        <form onSubmit={this.Submit}>
+          <label>Sort by</label>
+          {/* <Select 
+            placeholder='Sort by...'
+            options={options}
+            onSubmit={this.Submit}
+            value={this.state.value}
+            onChange={this.Change}  
+          /> */}
+          <select value={this.state.value} onChange={this.Change}>
+            <option value="cases">cases</option>
+            <option value="todayCases">cases today</option>
+            <option value="deaths">deaths</option>
+            <option value="todayDeaths">deaths today</option>
+            <option value="recovered">recovered</option>
+            <option value="active">active</option>
+            <option value="critical">critical</option>
+            <option value="casesPerOneMillion">cases per one million</option>
+            <option value="deathsPerOneMillion">deaths per one million</option>
+          </select>
+          <input type='submit' value='Submit' />
+        </form> 
+
+
+      </div>
+    );
+  }
+}
 
 export default App;
