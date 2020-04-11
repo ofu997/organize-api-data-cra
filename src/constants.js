@@ -3,132 +3,244 @@ const summary = '/all';
 const listData = 'https://corona.lmao.ninja/countries'
 
 const domesticURL = 'https://covidtracking.com/api/states';
+// const domesticPress = 'https://covidtracking.com/api/press';
+const domesticPress = 'https://mega-nap.herokuapp.com/api/ofu997/news/press';
 const latestFromDomesticState = '/daily?state=';
-const domesticStateAbbreviation = "";
-
-const setStateOfResponseFromAxios=
-'https://stackoverflow.com/questions/41194866/how-to-set-state-of-response-from-axios-in-react/41196643#41196643';
-
-const GetAbbreviation = userInput => {
+const publicHealth = 'https://covidtracking.com/api/states/info';
+const ConvertStateNameAndID = userInput => {
   const input=userInput.toLowerCase(); 
   switch(input) {
     default:
-      return userInput.toUpperCase(); 
+      break; 
     case "alaska":
-      return "AK";
+      return {'AK':'Alaska'};
+    case 'ak':
+      return {'AK':'Alaska'};
+    case "al":
+      return {'AL':'Alabama'};
     case "alabama":
-      return "AL";
+      return {'AL':'Alabama'};
+    case "ar":
+      return {'AR':'Arkansas'};
     case "arkansas":
-      return "AR";
+      return {'AR':'Arkansas'};
+    case "az":
+      return {'AZ':'Arizona'};
     case "arizona":
-      return "AZ";
+      return {'AZ':'Arizona'};
+    case "ca":
+      return {'CA':'California'};
     case "california":
-      return "CA" ;
+      return {'CA':'California'};
+    case "co":          
+      return {'CO':'Colorado'};
     case "colorado":          
-      return "CO";
+      return {'CO':'Colorado'};   
+    case "ct":
+      return {'CT':'Connecticut'};
     case "connecticut":
-      return "CT";
+      return {'CT':'Connecticut'};      
     case "dc":
-      return "DC";
+      return {'DC':'Washington, DC'};
+    case "washington dc":
+      return {'DC':'Washington, DC'};
+    case "de":
+      return {'DE':'Delaware'};
     case "delaware":
-      return "DE";
+      return {'DE':'Delaware'};
+    case "fl":
+      return {'FL':'Florida'};
     case "florida":
-      return "FL";
+      return {'FL':'Florida'};
+    case "ga":
+      return {'GA':'Georgia'};
     case "georgia":
-      return "GA";
+      return {'GA':'Georgia'};   
+    case "hi":
+      return {'HI':'Hawaii'};
     case "hawaii":
-      return "HI";
+      return {'HI':'Hawaii'};
+    case "ia":
+      return {'IA':'Iowa'};
     case "iowa":
-      return "IA";
+      return {'IA':'Iowa'};
+    case "id":
+      return {'ID':'Idaho'};
     case "idaho":
-      return "ID";
+      return {'ID':'Idaho'};
+    case "il":
+      return {'IL':'Illinois'};
     case "illinois":
-      return "IL";
+      return {'IL':'Illinois'};
+    case "in":
+      return {'IN':'Indiana'};
     case "indiana":
-      return "IN";
+      return {'IN':'Indiana'};      
+    case "ks":
+      return {'KS':'Kansas'};
     case "kansas":
-      return "KS";
+      return {'KS':'Kansas'};      
+    case "ky":
+      return {'KY':'Kentucky'};
     case "kentucky":
-      return "KY";
+      return {'KY':'Kentucky'};      
+    case "la":
+      return {'LA':'Louisiana'};
     case "louisiana":
-      return "LA";
+      return {'LA':'Louisiana'};
+    case "ma":
+      return {'MA':'Massachusetts'}
     case "massachusetts":
-      return "MA";
+      return {'MA':'Massachusetts'};      
+    case "md":
+      return {'MD':'Maryland'};
     case "maryland":
-      return "MD";
+      return {'MD':'Maryland'};      
+    case "me":
+      return {'ME':'Maine'};
     case "maine":
-      return "ME";
+      return {'ME':'Maine'};
+    case "mi":
+      return {'MI':'Michigan'};
     case "michigan":
-      return "MI";
+      return {'MI':'Michigan'};
+    case "mn":
+      return {'MN':'Minnesota'};
     case "minnesota":
-      return "MN";
+      return {'MN':'Minnesota'};      
+    case "mo":
+      return {'MO':'Missouri'};
     case "missouri":
-      return "MO";
+      return {'MO':'Missouri'};
+    case "ms":
+      return {'MS':'Mississippi'};
     case "mississippi":
-      return "MS";
+      return {'MS':'Mississippi'};      
+    case "mt":
+      return {'MT':'Montana'};
     case "montana":
-      return "MT";
+      return {'MT':'Montana'};      
+    case "nc":
+      return {'NC':'North Carolina'};
     case "north carolina":
-      return "NC";
+      return {'NC':'North Carolina'};      
+    case "nd":
+      return {'ND':'North Dakota'};
     case "north dakota":
-      return "ND";
+      return {'ND':'North Dakota'};      
+    case "ne":
+      return {'NE':'Nebraska'};
     case "nebraska":
-      return "NE";
+      return {'NE':'Nebraska'};
+    case "nh":
+      return {'NH':'New Hampshire'};
     case "new hampshire":
-      return "NH";
+      return {'NH':'New Hampshire'};
+    case "nj":
+      return {'NJ':'New Jersey'};
     case "new jersey":
-      return "NJ";
+      return {'NJ':'New Jersey'};      
+    case "nm":
+      return {'NM':'New Mexico'};
     case "new mexico":
-      return "NM";
+      return {'NM':'New Mexico'};
+    case "nv":
+      return {'NV':'Nevada'};
     case "nevada":
-      return "NV";
+      return {'NV':'Nevada'};
+    case "ny":
+      return {'NY':'New York'};
     case "new york":
-      return "NY";
+      return {'NY':'New York'};      
+    case "oh":
+      return {'OH':'Ohio'};
     case "ohio":
-      return "OH";
+      return {'OH':'Ohio'};      
+    case "ok":
+      return {'OK':'Oklahoma'};
     case "oklahoma":
-      return "OK";
+      return {'OK':'Oklahoma'};   
+    case "or":
+      return {'OR':'Oregon'};
     case "oregon":
-      return "OR";
+      return {'OR':'Oregon'};
+    case "pa":
+      return {'PA':'Pennsylvania'};      
     case "pennsylvania":
-      return "PA";
+      return {'PA':'Pennsylvania'};      
+    case "ri":
+      return {'RI':'Rhode Island'};
     case "rhode island":
-      return "RI";
+      return {'RI':'Rhode Island'};      
+    case "sc":
+      return {'SC':'South Carolina'};
     case "south carolina":
-      return "SC";
+      return {'SC':'South Carolina'};      
+    case "sd":
+      return {'SD':'South Dakota'};
     case "south dakota":
-      return "SD";
+      return {'SD':'South Dakota'};      
+    case "tn":
+      return {'TN':'Tennessee'};
     case "tennessee":
-      return "TN";
+      return {'TN':'Tennessee'};      
+    case "tx":
+      return {'TX':'Texas'};
     case "texas":
-      return "TX";
+      return {'TX':'Texas'};      
+    case "ut":
+      return {'UT':'Utah'};
     case "utah":
-      return "UT";
+      return {'UT':'Utah'};      
+    case "va":
+      return {'VA':'Virginia'};
     case "virginia":
-      return "VA";
+      return {'VA':'Virginia'};      
+    case "vt":
+      return {'VT':'Vermont'};
     case "vermont":
-      return "VT";
+      return {'VT':'Vermont'};      
+    case "wa":
+      return {'WA':'Washington'};
     case "washington":
-      return "WA";
+      return {'WA':'Washington'};
+    case "wi":
+      return {'WI':'Wisconsin'};
     case "wisconsin":
-      return "WI";
+      return {'WI':'Wisconsin'};      
+    case "wv":
+      return {'WV':'West Virginia'};      
     case "west virginia":
-      return "WV";
+      return {'WV':'West Virginia'};      
+    case "wy":
+      return {'WY':'Wyoming'};
     case "wyoming":
-      return "WY";
+      return {'WY':'Wyoming'};      
+    case "pr":
+      return {'PR':'Puerto Rico'};
     case "puerto rico":
-      return "PR";
+      return {'PR':'Puerto Rico'};      
+    case "as":
+      return {'AS':'American Samoa'};      
     case "american samoa":
-      return "AS";
+      return {'AS':'American Samoa'};      
+    case "gu":
+      return {'GU':'Guam'};
     case "guam":
-      return "GU";
+      return {'GU':'Guam'};      
+    case "mp":
+      return {'MP':'Northern Mariana Islands'};
     case "northern mariana islands":
-      return "MP";
+      return {'MP':'Northern Mariana Islands'};      
+    case "vi":
+      return {'VI':'Virgin Islands'};
     case "virgin islands":
-      return "VI";
+      return {'VI':'Virgin Islands'};
   }  
-}
-
-export { requestURL , summary, listData, 
-  domesticURL, latestFromDomesticState, domesticStateAbbreviation, GetAbbreviation,
 };
+
+
+
+export { requestURL , summary, listData, domesticURL, 
+  latestFromDomesticState, ConvertStateNameAndID, 
+  domesticPress, publicHealth };

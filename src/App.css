@@ -1,6 +1,6 @@
 .App {
-  text-align: center;
-  max-width: 1500px;
+  /* text-align: center; */
+  min-width: 100%;
   /* align-content: center; */
 }
 
@@ -12,33 +12,28 @@
 
 .App-header {
   background-color: #282c34;
-  /* min-height: 100vh; */
-  min-width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: top;
+  min-width: 105vw;
   font-size: calc(5px + 2vmin);
   color: white;
-  padding-top: 1em;
-  width: 100%;
-  max-width: 1500px;
+  padding-top: 2em;
+  /* tip: CSS-Tricks: The min-width property always overrides the width property whether followed before or after width in your declaration.  */
+  padding-bottom: 12px;
+  font-weight: 200;
 }
 
-p {
-  /* max-height: 12px; */
-  /* margin: 5px 0px; */
-  font-size: 1em;
+#Header {
+  text-shadow: 0 0 8px #8884d8, 0 0 2px #d8888f;
+  font-size: calc(7px + 2vmin);
+  margin-left: 10vw;
+  margin-bottom: -2px;
+  font-weight: 200;
+  font-stretch: expanded;
 }
 
 .worldSummary {
   margin: 1.5em 0em;
   font-weight: 200;
   font-size: 0.5em;
-}
-
-.App-link {
-  color: #61dafb;
 }
 
 @keyframes App-logo-spin {
@@ -55,45 +50,125 @@ p {
   /* border: 5px solid red; */
   max-height: 5%;
   margin: 5% auto 10% auto;
-  width: 50%;
+  width: 90%;
 }
+
+.CenteredPageContent {
+  /* margin: 15% 0% 10% 0%; */
+  /* border: 5px solid red; */
+  /* max-height: 5%; */
+  margin: 5% 10% 0% 10%;
+  /* width: 50%; */
+  /* margin-left: 10%; */
+  /* border: 5px solid orange;  */
+  /* border- */
+}
+
+
 
 .displayResult {
   /* border: 5px solid red; */
   margin: 0px 20px;
 }
 
+/* may not need */
+#rowForWorldResult {
+  display: flex; 
+  justify-content: space-between;
+}
+
+/* not needed */
 .WorldResult {
   /* border: 0.25pt solid #474a52; */
-  border-radius: 1em;
-  margin: 0em 0.1em;
+  /* border-radius: 1em; */
+  /* margin: 0em 0.1em; */
   /* max-width: 45%;  */
   padding: 0.5em 1em;
-  /* font-size: 1.25em; */
+  font-size: 0.6em;
   /* line-height: 4px; */
 }
 
-.DomesticResult {
-  /* border: 0.25pt solid #474a52; */
-  border-radius: 1em;
-  margin: 0em 0.1em;
-  /* max-width: 80%; */
-  padding: 0.5em 1em;
-  font-size: 1.25em;
-  /* line-height: 4px; */
+/*********** Responsive font sizes */
+.ResponsiveText {
+  /* 
+  font-size: calc([minimum size] + ([maximum size] - [minimum size]) * ((100vw - [minimum viewport width]) / ([maximum viewport width] - [minimum viewport width])));
+  */
+  font-size: calc(10px + (14-5) * ((100vw - 500px) / (1600-400)));  
+}
+.NavFontSize {
+  font-size: calc(6px + (11-3) * ((100vw - 500px) / (1600-400)));  
 }
 
-.Chart {
-  margin: 1em 11em 0em 0em;
+.HomePageFontSize {
+  font-size: calc(14px + (18-14) * ((100vw - 500px) / (1600-400)));  
+  margin-top: 10%;
+  margin-bottom: 5%;
 }
 
+.NewsFontSize {
+font-size: calc(11px + (18-11) * ((100vw - 500px) / (1600-400)));  
+}
+
+.NewsFontSize a {
+  color: #363456;
+} 
+
+.NewsFontSize a:hover {
+  color: #0239a7;
+}
+
+.NewsFontSize a:visited {
+  color: #0239a7;
+}
+
+.TableColumnHeadersFontSize {
+  font-size: calc(12px + (16-12) * ((100vw - 500px) / (1600-400)));  
+}
+
+.TableRowFontSize {
+  font-size: calc(9px + (12-9) * ((100vw - 500px) / (1600-400)));  
+}
+
+.TableRowFontSize a:link{
+  color: darkolivegreen;
+}
+/* mobile view: good */
+/* desktop view: right chart was cut off, now good */
+/* attempt: switching max-width and width to 95vw*/
+.ChartPosition {
+	left: 50%;
+	margin-left: -50vw;
+  margin-right: -50vw;
+  
+  max-width: 95vw;
+  /* max-width: 50vw; */
+  width: 95vw;  
+  /* width: 25vw; */
+
+	position: relative;
+  right: 50%;
+  float: center;
+}
 
 .ChartFont {
   font-size: 0.67em;;
 }
-/* .LineChart {
-  margin: 1em 1em; 
-} */
+
+.BarChartFont {
+  font-size: 0.3em;;
+}
+
+@media only screen and (min-width: 1200px) {
+  .parentDivForCharts {
+    display: flex; 
+    justify-content: space-between;
+    /* justify-content: space-around; */
+  }
+  .flexboxForCharts {
+    flex: 1;
+    /* justify-content: center; */
+  }
+}
 
 .sort {
   margin: 4em auto 1em auto;
@@ -104,6 +179,204 @@ p {
   line-height: 0.6em;
   margin: 0em 0em; 
 }
+
+#NameOfNation {
+  display: inline-block; 
+  margin-left: 5px;
+}
+
+.FlagAndCountry {
+  text-align: left;
+  margin-bottom: 5px;
+  padding-left: 15px;
+}
+
+.FlagAndCountry img {
+  width: 20px;
+  height: 10px;
+  margin-top: 5px;
+  display: inline-block;
+}
+
+.SubmitButton {
+  /* font-size: 1em; */
+  /* border-top: 1px solid #8884d8;
+  border-right: 1px solid #d88884;
+  border-bottom: 1px solid #d8888f;
+  border-left: 1px solid #8884d8; */
+  /* padding: 3px; */
+  border-radius: 10%;
+  border: 1px solid #8884d8;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-height: 2vh;
+  color: white; 
+  margin-right: 20px;
+}
+
+nav a:link {
+  color: white;
+}
+
+nav a {
+  /* display: inline-block; */
+  padding: 5px;
+  border-radius: 10% 10% 0% 0%;
+}
+
+nav a:visited {
+  color: #84d7b2;
+}
+
+nav a:hover {
+  color: #1db954;
+  /* background-color: #0239a7; */
+  background-color: #52565c;
+}
+
+nav a:active {
+  color: #282c34;
+}
+
+/* .nav-links {
+  width: 40%;
+  display: flex;
+  justify-content: space-around;
+  justify-content: flex-end;try this 
+  align-items: center;
+  list-style: none;
+  font-size: 1.25em;
+} */
+
+.nav-links {
+  /* tip: don't set width on links */
+  /* width: 40%; */
+  display: flex;
+  /* tip: this also moved nav links to the left */
+  justify-content: space-around;
+  /* justify-content: flex-start; */
+  align-items: center;
+  list-style: none;
+  /* font-size: 1.25em; */
+  /* border: 2px solid white;  */
+  margin-right: 10%;
+}
+
+.nav-links li {
+  white-space: nowrap; 
+  flex: 1;
+}
+
+/* .nav-links p {
+  padding: 1px 1px 1px 1px;
+} */
+
+.style-links {
+  padding: 15px;
+}
+
+/* .style-links:has(>a:active) {
+  background-color: #0239a7;
+} */
+
+.style-links > a:active {
+  background-color: #0239a7; 
+}
+
+/*********** News */
+
+.CenteredNewsContent {
+  margin: 0% 5% 10% 3%;
+  /* border: 5px solid orange; */
+  /* background-color: #f4f4f4; */
+  background-color: #f3f2fb;
+  padding: 5% 0%;
+}
+
+.CenteredNewsContent p {
+  margin-right: 5%;
+}
+
+.DomesticResultText {
+  line-height: 0.7em;
+  margin: 0;
+
+}
+
+.TableHeader {
+  display: flex;
+  /* line-height: 24px; */
+  /* font-size: 16px; */
+  padding: 0 10px;
+  /* justify-content: space-between;   */
+  justify-content: flex-end;    
+}
+
+.TableRow {
+  display: flex;
+  line-height: 24px;
+  /* line-height: 8px;   */
+  white-space: nowrap;
+  margin: 10px 0;
+  /* margin-bottom: -20px !important; */
+  padding: 10px 0px;
+  /* align-items: space-between; */
+  /* padding-left: 0; */
+}
+
+.TableRowColors {
+  /* background: #ffffff; */
+  /* border: 1px solid #e3e3e3;       */
+  /* background: #f3f2fb; */
+  background: #edf2f2;
+} 
+
+.TablePadding {
+  padding-left: 0;  
+}
+
+.TableBorder {
+  border: 1px outset #f3f2fb; 
+  /* border-radius: 10%; */
+}
+
+.ColumnHeaders {
+  /* background-color: linen; */
+  /* line-height: 8px !important; */
+  line-height: 12px !important;
+  margin-bottom: -15px !important;
+  /* padding: 0px !important; */
+  border: none !important;   
+
+  display: flex;
+  align-items: flex-end !important;
+}
+
+.TableHeader > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 5px;
+}
+
+.TableRow > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 5px;
+
+}
+
+.Table {
+  margin: 10% 2% 5% 2%;
+}
+
+/*
+.FlagAndCountry {
+  display: flex; 
+} */
 
 /* .WorldResult {
   border: 2pt solid #2F3418;
@@ -126,3 +399,60 @@ p {
   display: block;
   justify-content: center;
 }  */
+
+/* .parentDivForCharts {
+  text-align: center;
+} */
+
+/* .flexboxForCharts {
+  display: block;
+  margin: 0 auto;
+}  */
+
+/* @media only screen and (max-width: 699px) {
+  .parentOfNationCharts {
+    display: flex; 
+    justify-content: center;
+  }
+  .NationChart {
+    flex: 1;
+  }
+} */
+
+/* @media only screen and (min-width: 1200px) {
+  .parentOfNationCharts {
+    display: flex; 
+  }
+  .NationChart {
+    flex: 1;
+  }
+} */
+
+/* .CenterTheseChartsHopefully {
+  display: flex;
+  justify-content: center;
+} */
+
+/* .LineChart {
+  margin: 1em 1em; 
+} */
+
+/* .NationChart {
+  display: flex;
+  margin: 0 auto; 
+} */
+
+/* .WorldResultColumn {
+  width: 90%;
+  margin: 0 auto; 
+} */
+
+/* p { */
+  /* max-height: 12px; */
+  /* margin: 5px 0px; */
+  /* font-size: 1em; */
+/* } */
+
+/* .App-link {
+  color: #61dafb;
+} */

@@ -1,15 +1,11 @@
 import React from 'react';
 import './App.css';
 import axios from 'axios';
-import { Grid, Button, Select } from 'semantic-ui-react';
+import { Grid, Button, Select, Card, Table } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
-import {
-  requestURL, summary, listData,
-  domesticURL, latestFromDomesticState, domesticStateAbbreviation,
-  GetAbbreviation,
-} from './constants';
-import { BarChart, LineChart, Line, CartesianGrid, 
-  XAxis, YAxis, Tooltip, Legend, Bar } from 'recharts'; 
+import { requestURL, summary, listData, domesticURL, latestFromDomesticState, ConvertStateNameAndID, domesticPress, publicHealth } from './constants';
+import { BarChart, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, ResponsiveContainer } from 'recharts';
+import { BrowserRouter as BR, Route, Link, Switch, Router } from 'react-router-dom';
 
 class App extends React.Component {
   constructor(props) {
@@ -24,16 +20,17 @@ class App extends React.Component {
       submitted: false,
       worldLookupArray: [],
       timelineCases: [],
-      timelineDeaths: [], 
+      timelineDeaths: [],
+      pressData: [],
 
       domesticLookup: '',
       domesticSubmitted: false,
-      domesticLookupArray: [], 
+      domesticLookupArray: [],
     };
     this.LoadData = this.LoadData.bind(this);
+    this.LoadNews = this.LoadNews.bind(this);
     this.Submit = this.Submit.bind(this);
     this.onChange = this.onChange.bind(this);
-    this.DomesticLoadData = this.DomesticLoadData.bind(this);
     this.DomesticSubmit = this.DomesticSubmit.bind(this);
     this.DomesticOnChange = this.DomesticOnChange.bind(this);
   }
@@ -57,15 +54,15 @@ class App extends React.Component {
         })
       });
   };
-  DomesticLoadData = () => {
+  LoadNews = () => {
     return axios
-      .get(`${domesticURL}`)
-      .catch(error => {
-        this.setState({
-          error: `${error}`,
-          loading: false,
-        })
-      });
+      .get(`${domesticPress}`)
+      .then(result => {
+        const first20 = result.data.slice(0, 20);
+        const first20DescendingOrder = first20.reverse(); 
+        console.log('first20: ' + first20DescendingOrder);
+        this.setState({ pressData: first20DescendingOrder, })
+      })
   }
   onChange(event) {
     this.setState({
@@ -80,7 +77,7 @@ class App extends React.Component {
     })
   }
   Submit = (event) => {
-    const newNation=[this.state.lookup];
+    const newNation = [this.state.lookup];
     this.setState({
       lookup: this.state.lookup,
       submitted: true,
@@ -89,86 +86,126 @@ class App extends React.Component {
     event.preventDefault();
   }
   DomesticSubmit = (event) => {
-    const newState=[this.state.domesticLookup];
+    const newUSAState = [this.state.domesticLookup];
     this.setState({
       domesticLookup: this.state.domesticLookup,
       domesticSubmitted: true,
-      domesticLookupArray: newState.concat(this.state.domesticLookupArray),  
+      domesticLookupArray: newUSAState.concat(this.state.domesticLookupArray),
     });
-    console.log(this.state.domesticLookupArray);
+    // console.log(this.state.domesticLookupArray);
     event.preventDefault();
   }
   componentDidMount() {
     this.LoadData();
-    this.DomesticLoadData();
+    this.LoadNews();
   }
 
   render() {
     return (
-      <div>
-
-        <div className="App">
-          <header className="App-header">
-            <h3><strong>Virus Visualizer</strong></h3>
-            <div className='worldSummary'>
-              <p><strong>Worldwide data</strong></p>
-              <p>cases: {this.state.cases} &nbsp;&nbsp;&nbsp;deaths: {this.state.deaths}&nbsp;&nbsp;&nbsp;recoveries: {this.state.recovered}</p>
-            </div>
-          </header>
-        </div> 
-
-
+      <BR>
+        {/* parent element div */}
         <div>
-          <Grid doubling columns='two'>
-            <Grid.Row>
-              {/* international */}
-              <Grid.Column className='column'>
-                <div className="searchDiv">
-                  <Search
-                    onSubmit={this.Submit}
-                    value={this.state.lookup}
-                    onChange={this.onChange}
-                    placeholder="Search nation"
-                  />
-                  {
-                    this.state.worldLookupArray.map(item =>
-                      <Result
-                        name={item}
-                        key={item}
-                      />
-                    )
-                  }     
-                </div>
-              </Grid.Column>
-              {/* domestic */}
-              <Grid.Column>
-                <div className="searchDiv">
-                  <Search
-                    onSubmit={this.DomesticSubmit}
-                    value={this.state.domesticLookup}
-                    onChange={this.DomesticOnChange}
-                    placeholder="Search state"
-                  />
-                  {
-                    this.state.domesticLookupArray.map(item =>
-                      <DomesticResult
-                        name={item}
-                        key={item}
-                      />  
-                    )
-                  }  
-                </div>
-              </Grid.Column>
+          <div className="App">
+            <header className="App-header">
+              <h3 id='Header'><strong>Virus Visualizer</strong></h3>
+              <nav className='ResponsiveText'>
+                <ul className='nav-links'>
+                  <li>
+                    <Link to='/'>Home</Link>
+                  </li>
+                  <li>
+                    <Link to='/track-by-nation'>Track nations</Link>
+                  </li>
+                  <li>
+                    <Link to='/sort-nations'>Sort nations</Link>
+                  </li>
+                  <li>
+                    <Link to='/track-by-states'>Track states</Link>
+                  </li>
+                  <li>
+                    <Link to='/sort-states'>Sort states</Link>
+                  </li>
+                  <li>
+                    <Link to='/state-public-health-resources'>State resources</Link>
+                  </li>
+                </ul>
+              </nav>
+            </header>
+          </div>
+
+          <Grid columns='one'>
+            <Route path='/' exact>
+              <Home
+                cases={this.state.cases}
+                deaths={this.state.deaths}
+                recovered={this.state.recovered}
+                pressData={this.state.pressData}
+              />
+            </Route>
+            {/* international */}
+            <Route path='/track-by-nation' exact>
+              <Grid.Row id='rowForWorldResult'>
+                <Grid.Column>
+                  <div className="searchDiv">
+                    <Search
+                      onSubmit={this.Submit}
+                      value={this.state.lookup}
+                      onChange={this.onChange}
+                      placeholder="Search nation"
+                    />
+                    {
+                      this.state.worldLookupArray.map(item =>
+                        <Result
+                          name={item}
+                          key={item}
+                          listOfNations={this.state.worldLookupArray}
+                        />
+                      )
+                    }
+                  </div>
+                </Grid.Column>
               </Grid.Row>
-            </Grid>          
+            </Route>
+
+            {/* domestic */}
+            <Route path='/track-by-states' exact>
+              <Grid.Row>
+                <Grid.Column>
+                  <div className="searchDiv">
+                    <Search
+                      onSubmit={this.DomesticSubmit}
+                      value={this.state.domesticLookup}
+                      onChange={this.DomesticOnChange}
+                      placeholder="Search state"
+                    />
+                    {
+                      this.state.domesticLookupArray.map(item =>
+                        <DomesticResult
+                          name={item}
+                          key={item}
+                        />
+                      )
+                    }
+                  </div>
+                </Grid.Column>
+              </Grid.Row>
+            </Route>
+          </Grid>
+
+          <Route path='/sort-nations' exact>
+            <Sort />
+          </Route>
+
+          <Route path='/sort-states' exact>
+              <DomesticSort />
+          </Route>
+
+          <Route path='/state-public-health-resources' exact>
+              <PublicHealth />
+          </Route>
         </div>
-
-
-        <div className='sort'>
-          <Sort/>
-        </div>
-
-      </div> 
+        {/* |^|^| parent element div */}
+      </BR>
     );
   }
 } // App
@@ -182,10 +219,11 @@ const Search = (props) =>
         value={props.value}
         onChange={props.onChange}
         array={props.array}
+        show={props.show}
       />
-      <Button basic compact size='mini' color='black' attached='right' type="submit">
+      <button type="submit" className='SubmitButton'>
         Submit
-      </Button>
+      </button>
     </div>
   </form>
 
@@ -202,12 +240,13 @@ class Result extends React.Component {
       active: null,
       critical: null,
       casesPerOneMillion: null,
-
+      flag: null,
       timelineCases: [],
-      timelineDeaths: [], 
+      timelineDeaths: [],
+      timelinePercentageIncreaseInDeath: [],
     };
     this.LoadNationData = this.LoadNationData.bind(this);
-    this.LoadTimeLineCases = this.LoadTimeLineCases.bind(this); 
+    this.LoadTimeLineCases = this.LoadTimeLineCases.bind(this);
   }
   LoadNationData = () => {
     return axios
@@ -215,6 +254,7 @@ class Result extends React.Component {
       .then(result => {
         this.setState({
           country: result.data.country,
+          flag: result.data.countryInfo.flag,
           cases: result.data.cases,
           todayCases: result.data.todayCases,
           deaths: result.data.deaths,
@@ -229,101 +269,105 @@ class Result extends React.Component {
   }
   LoadTimeLineCases = () => {
     return axios
-      .get(`${requestURL}`+'/v2/historical/'+`${this.props.name}`)
+      .get(`${requestURL}` + '/v2/historical/' + `${this.props.name}`)
       .then(
         result => {
-          this.setState({
-            timelineCases: result.data.timeline.cases, 
-            timelineDeaths: result.data.timeline.deaths, 
-          })
-          this.GraphData(result.data.timeline.cases, result.data.timeline.deaths);  
+          this.GraphData(result.data.timeline.cases, result.data.timeline.deaths);
         },
       );
   }
   GraphData = (cases, deaths) => {
-    const dataCases = []; 
-    const dataDeaths = []; 
-    let keys = Object.keys(cases);
-    let keysOfDeath=Object.keys(deaths); 
-    for ( let i = keys.length-1; i > -1; i-- ) {
-      var obj = new Object();
-      obj.date = keys[i];
-      obj.cases = cases[keys[i]];
-      dataCases.push(obj);
-    }    
-    for ( let i = keysOfDeath.length-1; i > -1; i-- ) {
-      var deathObj = new Object(); 
-      deathObj.date = keysOfDeath[i];
-      deathObj.deaths = deaths[keysOfDeath[i]]; 
-      dataDeaths.push(deathObj); 
-    }    
+    console.log('load timeline cases: ' + cases);
+    const arrayCases = [];
+    const arrayDeaths = [];
+    const arrayPercentages = [];
+    let keysOfCases = Object.keys(cases);
+    let keysOfDeath = Object.keys(deaths);
+    for (let i = 0; i < keysOfCases.length; i++) {
+      const caseObj = {
+        date: keysOfCases[i],
+        cases: cases[keysOfCases[i]]
+      };
+      arrayCases.push(caseObj);
+    }
+    for (let i = 0; i < keysOfDeath.length; i++) {
+      const deathObj = {
+        date: keysOfDeath[i],
+        deaths: deaths[keysOfDeath[i]],
+      };
+      arrayDeaths.push(deathObj);
+    }
+    for (let i = 0; i < keysOfDeath.length; i++) {
+      let standardizedPercentage;
+      const percentageIncrease = deaths[keysOfDeath[i - 1]] === 0 && deaths[keysOfDeath[i]] === 0 ? 0
+        : 100 * ( (deaths[keysOfDeath[i]] - deaths[keysOfDeath[i - 1]]) / deaths[keysOfDeath[i - 1]] ).toFixed(2);
+      if (percentageIncrease === Infinity || percentageIncrease > 200) {
+        standardizedPercentage = 200;
+      }
+      else {
+        standardizedPercentage = percentageIncrease;
+      }
+      const deathPercentageObj = {
+        date: keysOfDeath[i],
+        percentage: standardizedPercentage,
+      };
+      arrayPercentages.push(deathPercentageObj);
+    }
+    console.log(arrayPercentages);
     this.setState({
-      timelineCases: dataCases,
-      timelineDeaths: dataDeaths,
+      timelineCases: arrayCases,
+      timelineDeaths: arrayDeaths,
+      timelinePercentageIncreaseInDeath: arrayPercentages,
     })
   }
   componentDidMount() {
     this.LoadNationData();
-    this.LoadTimeLineCases(); 
+    this.LoadTimeLineCases();
   }
 
   render() {
     const { country, cases, todayCases, deaths, todayDeaths, recovered,
-    active, critical, casesPerOneMillion, deathsPerOneMillion, timelineCases, timelineDeaths,
-    } = this.state; 
-    const deathPercentIncrease=((this.state.todayDeaths/(this.state.deaths-this.state.todayDeaths))*100).toFixed(2); 
-    const casesPercentIncrease=((this.state.todayCases/(this.state.cases-this.state.todayCases))*100).toFixed(2);
-    const deathRecoveryRatio = (100*(deaths/(deaths+recovered))).toFixed(2);
-
+      active, critical, casesPerOneMillion, deathsPerOneMillion,
+      timelineCases, timelineDeaths, timelinePercentageIncreaseInDeath, flag } = this.state;
+    const deathPercentIncrease = ((this.state.todayDeaths / (this.state.deaths - this.state.todayDeaths)) * 100).toFixed(2);
+    const casesPercentIncrease = ((this.state.todayCases / (this.state.cases - this.state.todayCases)) * 100).toFixed(2);
+    const deathRecoveryRatio = ( 100 * ( deaths / ( deaths + recovered ) ) ).toFixed(2);
     return (
-      <div className="WorldResult">
-        <Grid doubling columns='two'>
-          <Grid.Row>
-            <Grid.Column>
+      <div>
+        <Grid style={{ marginTop: 1 }} >
+          <Grid.Row columns={1} style={{ maxHeight: 20 }}>
+            <Grid.Column className='ResponsiveText FlagAndCountry' >
+              <img src={flag} /><p id='NameOfNation'>{country}</p>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row doubling columns={2}>
+            <Grid.Column className='ResponsiveText'>
               <p>Deaths: {deaths}.</p>
               <p>Deaths today: {todayDeaths}</p>
-              <p>Daily increase in death: <strong>{deathPercentIncrease}%</strong></p> 
+              <p>Daily increase in death: <strong>{deathPercentIncrease}%</strong></p>
               <p>Recoveries: {recovered}</p>
-              <p><sup>Deaths</sup>&frasl;<sub>Deaths+Recoveries</sub>: {deathRecoveryRatio}</p>
+              <p>Deaths per resolved cases: {deathRecoveryRatio}%</p>
             </Grid.Column>
-            <Grid.Column>
-              <p>{country} cases: {cases}</p>
-              <p>Cases today: {todayCases}</p>          
-              <p>Daily increase in cases: <strong>{casesPercentIncrease}%</strong></p>               
-              <p>{active} active cases, {critical} of which are critical.</p>
+            <Grid.Column className='ResponsiveText'>
+              <p>Cases: {cases}</p>
+              <p>Cases today: {todayCases}</p>
+              <p>Daily increase in cases: <strong>{casesPercentIncrease}%</strong></p>
+              <p>{active} active cases, {critical} of which are critical</p>
               <p>Cases per million: {casesPerOneMillion}</p>
             </Grid.Column>
-
-      
           </Grid.Row>
         </Grid>
-        <Grid>
-          <Grid columns='one'>
-            <Grid.Row>
-              <div className='Chart'>
-                <LineChart data={timelineDeaths} layout="vertical" width={300} height={300} className='ChartFont'>
-                  <CartesianGrid strokeDasharray="3 3"/>
-                  <XAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
-                  <YAxis dataKey="date" type='category'/>
-                  <Tooltip/>
-                  <Legend />
-                  <Line dataKey="deaths" stroke="#8884d8" />
-                </LineChart>          
-
-                <LineChart layout="vertical" width={300} height={300} className='ChartFont' data={timelineCases}>
-                  <CartesianGrid strokeDasharray="3 3"/>
-                  <XAxis type="number" domain={[0, dataMax => (dataMax *1.25)]} />
-                  <YAxis dataKey="date" type='category'/>
-                  <Tooltip/>
-                  <Legend />
-                  <Line dataKey="cases" stroke="#8884d8" />
-                </LineChart>              
-                <hr></hr>
-              </div>      
-            </Grid.Row>
-          </Grid>
-        </Grid>
-
+        
+        <Chart 
+          dataSet1={timelinePercentageIncreaseInDeath}
+          dataSet2={timelineDeaths}
+          dataSet3={timelineCases}
+          dataKey1='percentage'
+          dataKey2='deaths'
+          dataKey3='cases'
+          dataMaxForChart1={2.00}
+          XAxisLabelForChart1='Percent increase in deaths'
+        />
       </div>
     );
   };
@@ -335,70 +379,122 @@ class DomesticResult extends React.Component {
     this.state = {
       state: null,
       cases: null,
+      todayCases: null,
       testedNegative: null,
       pendingCases: null,
       hospitalized: null,
       deaths: null,
+      todayDeaths: null,
       dateChecked: null,
-      readableDateChecked: null, 
+      readableDateChecked: null,
       totalTested: null,
       allData: null,
+      percentageIncreaseInCases: [],
     };
     this.LoadStateData = this.LoadStateData.bind(this);
   }
   LoadStateData = () => {
-    const abbr = GetAbbreviation(this.props.name);
+    const abbr = ConvertStateNameAndID(this.props.name);
     return axios
-      .get(`${domesticURL}${latestFromDomesticState}${abbr}`)
+      .get(`${domesticURL}${latestFromDomesticState}${Object.keys(abbr)}`)
       .then(result => {
-        var state = result.data[0];
+        const recentData = result.data[0];
         this.setState({
-          state: abbr, 
-          cases: state.positive,
-          testedNegative: state.negative,
-          pendingCases: state.pending,
-          hospitalized: state.hospitalized,
-          deaths: state.death,
-          totalTested: state.total,
-          readableDateChecked: state.dateChecked.replace("T", " ").replace(":00Z", " "), 
+          state: Object.values(abbr),
+          cases: recentData.positive,
+          todayCases: recentData.positiveIncrease,
+          testedNegative: recentData.negative,
+          pendingCases: recentData.pending,
+          hospitalized: recentData.hospitalizedCurrently,
+          deaths: recentData.death,
+          todayDeaths: recentData.deathIncrease,
+          totalTested: recentData.total,
+          readableDateChecked: recentData.dateChecked.replace("T20:00:00Z", " "),
+          allData: result.data.reverse(),
         });
+        this.MakeTimeline(this.state.allData);
       })
+  }
+  MakeTimeline = (data) => {
+    const percentageArrayGoingToLoop = [];
+    let standardizedPercentage;
+    for (let i = 1; i < data.length - 1; i++) {
+      const percentIncrease = data[i - 1].positive === 0 && data[i].positive === 0 ? 0
+        : 100 * ((data[i].positive - data[i - 1].positive) / data[i - 1].positive).toFixed(2);
+      if (percentIncrease === Infinity || percentIncrease > 200) {
+        standardizedPercentage = 200;
+      }
+      else {
+        standardizedPercentage = percentIncrease;
+      }
+      const readableDate = data[i].dateChecked.replace("T20:00:00Z", " ");
+      const casesPercentageObj = {
+        date: readableDate,
+        percentIncreaseProp: standardizedPercentage,
+      };
+      percentageArrayGoingToLoop.push(casesPercentageObj);
+    }
+    this.setState({
+      percentageIncreaseInCases: percentageArrayGoingToLoop,
+    })
+    console.log(this.state.percentageIncreaseInCases);
   }
   componentDidMount() {
     this.LoadStateData();
   }
 
   render() {
-    const { state, cases, testedNegative, pendingCases, hospitalized,
-      deaths, totalTested, readableDateChecked } = this.state;
-    const ratio = (100*(deaths/cases)).toFixed(2); 
+    const { state, cases, todayCases, deaths, todayDeaths, pendingCases, hospitalized,
+      totalTested, readableDateChecked, allData, percentageIncreaseInCases } = this.state;
+    const deathPercentIncrease = (100 * (todayDeaths / (deaths - todayDeaths))).toFixed(2);
+    const casesPercentIncrease = (100 * (todayCases / (cases - todayCases))).toFixed(2);
     return (
-      <div className='Result'>
-        <p>
-          In "{state}", as of { readableDateChecked } there have been {cases} confirmed cases.
-          </p>
-        <p>
-          Deaths: {deaths}
-        </p>
-        <p>
-          There have been {totalTested} tests.
-          </p>
-        <p>
-          {testedNegative} tested negative.
-          </p>
-        {
-          pendingCases?
-          <p>{pendingCases} are pending</p>
-          : null
-        }          
-        {
-          hospitalized ?
-            <p>{hospitalized} are hospitalized. </p>
-            : null
-        }
-        <p>Deaths per confirmed cases percentage: {ratio}</p>
+      <div>
+        <Grid columns='one' style={{ marginTop: 5 }}>
+          <Grid.Row>
+            <Grid.Column className='ResponsiveText DomesticResultText'>
+              <p>
+                In {state}, as of {readableDateChecked} there have been {cases} confirmed cases out of {totalTested} tests
+              </p>
+              <p>
+                Cases today: {todayCases}
+              </p>
+              <p>
+                Daily increase in cases: <strong>{casesPercentIncrease}%</strong>
+              </p>
+              {
+                pendingCases ?
+                  <p>{pendingCases} tests are pending</p>
+                  : null
+              }
+              {
+                hospitalized ?
+                  <p>{hospitalized} are hospitalized. </p>
+                  : null
+              }
+              <p>
+                Deaths: {deaths}
+              </p>
+              <p>
+                Deaths today: {todayDeaths}
+              </p>
+              <p>
+                Daily increase in deaths: <strong>{deathPercentIncrease}%</strong>
+              </p>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
 
-        <hr />
+        <Chart 
+          dataSet1={percentageIncreaseInCases}
+          dataSet2={allData}
+          dataSet3={allData}
+          dataKey1='percentIncreaseProp'
+          dataKey2='death'
+          dataKey3='positive'
+          dataMaxForChart1={1.25}
+          XAxisLabelForChart1='Percent increase in cases'
+        />
       </div>
     );
   };
@@ -407,59 +503,75 @@ class DomesticResult extends React.Component {
 class Sort extends React.Component {
   constructor(props) {
     super(props);
-    this.state={
+    this.state = {
       submitted: false,
       value: '',
-      sortedData: [], 
-      dataKey: '', 
+      sortedData: [],
+      dataKey: '',
+      colorOfBar: '#ffffff',
     };
-    this.Change=this.Change.bind(this);
-    this.Submit=this.Submit.bind(this); 
-    this.LoadSortData=this.LoadSortData.bind(this); 
+    this.Change = this.Change.bind(this);
+    this.Submit = this.Submit.bind(this);
+    this.LoadSortData = this.LoadSortData.bind(this);
   }
   Change(event) {
     this.setState({
       value: event.target.value,
-      submitted: false, 
+      submitted: false,
     });
   }
   Submit(event) {
-    event.preventDefault(); 
-    if (this.state.value==''){
+    event.preventDefault();
+    if (this.state.value === '') {
       return;
     }
     this.setState({
-      submitted: true, 
+      submitted: true,
     });
-    this.LoadSortData(); 
-    // this.renderChart(); 
+    this.LoadSortData(this.state.value);
   }
-  LoadSortData = () => {
-    console.log(this.state.value);
-    console.log(this.state.submitted);
+  LoadSortData = (value) => {
+    // console.log(this.state.value);
+    if (value === 'deaths' || value === 'todayDeaths' || value === 'deathsPerOneMillion') {
+      this.setState({
+        colorOfBar: '#d88884',
+      })
+    }
+    if (value === 'cases' || value === 'todayCases' || value === 'recovered' || value === 'active' || value === 'critical' || value === 'casesPerOneMillion') {
+      this.setState({
+        colorOfBar: '#8884d8',
+      })
+    }
+    if (value === 'recovered' || value === 'active' || value === 'critical') {
+      this.setState({
+        colorOfBar: '#a9bfc0',
+      })
+    }
     return axios
       .get(`${requestURL}` + '/countries?sort=' + `${this.state.value}`)
       .then(result => {
-        this.GraphSortedData(result.data);
+        const top50Nations = [];
+        for (let i = 0; i < 50; i++) {
+          top50Nations.push(result.data[i]);
+        }
+        this.GraphSortedData(top50Nations);
       })
   }
   GraphSortedData = (data) => {
     this.setState({
-      sortedData: data, 
+      sortedData: data,
     })
   }
   componentDidMount() {
     this.LoadSortData();
   }
-  
+
   render() {
-    const { value, submitted, sortedData } = this.state; 
-    // const chart; 
-    // console.log(this.state.sortedData);
+    const { value, submitted, sortedData, colorOfBar } = this.state;
     return (
-      <div id='parentElementSort'>
+      <div id='parentElementSort' className='sort'>
         <form onSubmit={this.Submit}>
-          <label>Sort by</label>
+          <label>Sort nations by</label>
           <select value={this.state.value} onChange={this.Change}>
             <option value=""></option>
             <option value="cases">cases</option>
@@ -472,25 +584,267 @@ class Sort extends React.Component {
             <option value="casesPerOneMillion">cases per one million</option>
             <option value="deathsPerOneMillion">deaths per one million</option>
           </select>
-          <input type='submit' value='Submit' />
-        </form> 
+          <input type='submit' value='Submit' className='SubmitButton' />
+        </form>
         {
-          submitted &&           
-          // <div>
-          //   {this.renderChart()}
-          // </div>
-          <BarChart width={1500} height={500} data={sortedData} className='ChartFont'>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="country"/>
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey={value} fill="#8884d8" />
-          </BarChart>   
+          submitted &&
+          <ResponsiveContainer width='80%' height={1500}>
+            <BarChart layout='vertical' data={sortedData} className='ChartFont'>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type='number' domain={[0, 'dataMax']} orientation='top' />
+              <YAxis dataKey="country" type='category' />
+              <Tooltip />
+              <Bar dataKey={value} fill={colorOfBar} />
+            </BarChart>
+          </ResponsiveContainer>
         }
       </div>
     );
   }
 }
+
+class DomesticSort extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      submitted: false,
+      value: '',
+      sortedData: [],
+      dataKey: '',
+      colorOfBar: '#ffffff',
+    };
+    this.Change = this.Change.bind(this);
+    this.Submit = this.Submit.bind(this);
+    this.LoadSortData = this.LoadSortData.bind(this);
+  }
+  Change(event) {
+    this.setState({
+      value: event.target.value,
+      submitted: false,
+    });
+  }
+  Submit(event) {
+    event.preventDefault();
+    if (this.state.value === '') {
+      return;
+    }
+    this.setState({
+      submitted: true,
+    });
+    this.LoadSortData(this.state.value);
+  }
+  LoadSortData = (value) => {
+    if (value === 'deaths' || value === 'todayDeaths') {
+      this.setState({
+        colorOfBar: '#d88884',
+      })
+    }
+    if (value === 'cases' || value === 'todayCases' || value === 'active') {
+      this.setState({
+        colorOfBar: '#8884d8',
+      })
+    }
+
+    return axios
+      .get(`${requestURL}` + '/states')
+      .then(result => {
+        const sortedStates = result.data.sort(this.SortStates(value));
+        this.GraphSortedData(sortedStates);
+      })
+  }
+  SortStates = (prop) => {
+    return function (a, b) {
+      if (a[prop] < b[prop]) {
+        return 1;
+      }
+      else if (a[prop] > b[prop]) {
+        return -1;
+      }
+      return 0;
+    }
+  }
+  GraphSortedData = (data) => {
+    this.setState({
+      sortedData: data,
+    })
+  }
+  componentDidMount() {
+    this.LoadSortData();
+  }
+
+  render() {
+    const { value, submitted, sortedData, colorOfBar } = this.state;
+    return (
+      <div id='parentElementSort' className='sort'>
+        {/* className='sort' */}
+        <form onSubmit={this.Submit}>
+          <label>Sort states by</label>
+          <select value={this.state.value} onChange={this.Change}>
+            <option value=""></option>
+            <option value="cases">cases</option>
+            <option value="todayCases">cases today</option>
+            <option value="deaths">deaths</option>
+            <option value="todayDeaths">deaths today</option>
+            <option value="active">active cases</option>
+          </select>
+          <input type='submit' value='Submit' className='SubmitButton' />
+        </form>
+        {
+          submitted &&
+          <ResponsiveContainer width='80%' height={1500}>
+            <BarChart layout='vertical' data={sortedData} className='ChartFont'>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type='number' domain={[0, 'dataMax']} orientation='top' />
+              <YAxis dataKey="state" type='category' />
+              <Tooltip />
+              {/* <Legend /> */}
+              <Bar dataKey={value} fill={colorOfBar} />
+            </BarChart>
+          </ResponsiveContainer>
+        }
+      </div>
+    );
+  }
+}
+
+class PublicHealth extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      publicHealthArray: [],
+    }
+    this.LoadPublicHealthInfo = this.LoadPublicHealthInfo.bind(this);
+  }
+  LoadPublicHealthInfo = () => {
+    return axios
+      .get(`${publicHealth}`)
+      .then(result => {
+        this.setState({
+          publicHealthArray: result.data,
+        })
+      });
+  }
+  componentDidMount() {
+    this.LoadPublicHealthInfo(); 
+  }
+  render() {
+    return (
+      <div className='Table'>
+      <div className='TableRow ColumnHeaders TablePadding TableRowFontSize'>
+        {/* <p>Public health info goes here</p> */}
+        <span style={{ width: '20%' }}>
+            {/* State */}
+        </span>
+        <span style={{ width: '30%' }}>
+            Resource
+        </span>
+        <span style={{ width: '25%' }}>
+            Secondary resource
+        </span>        
+        <span style={{ width: '25%' }}>
+            Social Media
+        </span>          
+      </div>
+      {
+        this.state.publicHealthArray.map(item =>
+          <div key={ item.state } className='TableRowFontSize TableRow TableRowColors TablePadding TableBorder'>
+            <span style={{ width: '20%', borderRight: '1px dashed #1db954', paddingLeft: 5}}>
+              { Object.values(ConvertStateNameAndID(item.state)) }
+            </span>
+            <span style={{ width: '30%', borderRight: '1px dashed #1db954' }}>
+              <a href={item.covid19Site} target='_blank' rel='noopener noreferrer'>{ item.covid19Site.slice(8,28) }</a>
+            </span>
+            <span style={{ width: '25%', borderRight: '1px dashed #1db954' }}>
+              {
+                (item.covid19SiteSecondary!==item.covid19Site && (item.covid19SiteSecondary)) && 
+                  <a href={item.covid19SiteSecondary} target='_blank' rel='noopener noreferrer'>
+                    { item.covid19SiteSecondary.slice(8,28) }
+                  </a>
+              }
+            </span>        
+            <span style={{ width: '25%'}}>
+              <a href={item.twitter.split('')[0]==='@'?'https://twitter.com/'+item.twitter.slice(1) :item.twitter}>
+                {item.twitter.split('')[0]==='@'? item.twitter : item.twitter.slice(12,29)}
+              </a>
+            </span>                   
+          </div>
+        )
+      }
+      </div>
+    );
+  }
+}  // PublicHealth
+
+const Home = (props) =>
+  <div>
+  {/*|^|^| parent div */}
+    <Grid.Row>
+      <Grid.Column>
+        <div className='CenteredPageContent HomePageFontSize'>
+          {/* <h2>Home page</h2> */}
+          <p>Worldwide there have been {props.cases} cases, {props.deaths} deaths, and {props.recovered} recoveries from COVID-19.</p>
+          <p>Use the links above to see how the virus is affecting different states and nations, and access state-level public health information.</p>
+        </div>
+      </Grid.Column>
+    </Grid.Row>
+    <Grid.Row>
+      <Grid.Column>
+        <div className='CenteredNewsContent'>
+          <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      In the news</h3>
+          <News
+            listOfArticles={props.pressData}
+          />
+        </div>
+      </Grid.Column>
+    </Grid.Row>
+  {/*\v/\v/ parent div  */} 
+  </div>
+
+const News = (props) =>
+  props.listOfArticles.map(item =>
+    <div key={ item._id }>
+      <ul className='NewsFontSize'>
+        <p>&#8226;{item.publication}: <a href={item.url} target="_blank" rel='noopener noreferrer'>{item.title}</a></p>
+      </ul>
+    </div>
+  )
+
+const Chart = (props) =>
+  <div>
+    <div className='parentDivForCharts'>
+      <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>
+        <LineChart width={300} height={300} className='ChartFont' data={ props.dataSet1 }>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" type='category' />
+          <YAxis type="number" domain={[0, dataMax => (dataMax * props.dataMaxForChart1 )]} />
+          <Tooltip />
+          <Legend />
+          <Line dataKey={ props.dataKey1 } name={ props.XAxisLabelForChart1 } stroke="#8884d8" />
+        </LineChart>
+      </div>
+      <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>
+        <LineChart data={ props.dataSet2 } width={300} height={300} className='ChartFont'>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" type='category' />
+          <YAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
+          <Tooltip />
+          <Legend />
+          <Line dataKey={ props.dataKey2 } name="Deaths" stroke="#d88884" />
+        </LineChart>
+      </div>
+      <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>
+        <LineChart width={300} height={300} className='ChartFont' data={ props.dataSet3 }>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" type='category' />
+          <YAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
+          <Tooltip />
+          <Legend />
+          <Line dataKey={ props.dataKey3 } name="Cases" stroke="#8884d8" />
+        </LineChart>
+      </div>
+    </div>  
+    <hr style={{ margin: "3em 1em", borderTop: '2px solid #dbcccd', borderBottom: '2px solid #8884d8' }} />
+  </div>
 
 export default App;
