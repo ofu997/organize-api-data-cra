@@ -290,10 +290,10 @@ class Result extends React.Component {
       };
       arrayCases.push(caseObj);
     }
-    for (let i = 0; i < keysOfDeath.length; i++) {
+    for (let i = 1; i < keysOfDeath.length; i++) {
       const deathObj = {
         date: keysOfDeath[i],
-        deaths: deaths[keysOfDeath[i]],
+        deaths: deaths[keysOfDeath[i]] - deaths[keysOfDeath[i-1]],
       };
       arrayDeaths.push(deathObj);
     }
@@ -365,6 +365,8 @@ class Result extends React.Component {
           dataKey1='percentage'
           dataKey2='deaths'
           dataKey3='cases'
+          chart2Name='Daily deaths'
+          chart3Name='Cases'
           dataMaxForChart1={2.00}
           XAxisLabelForChart1='Percent increase in deaths'
         />
@@ -490,9 +492,11 @@ class DomesticResult extends React.Component {
           dataSet2={allData}
           dataSet3={allData}
           dataKey1='percentIncreaseProp'
-          dataKey2='death'
-          dataKey3='positive'
-          dataMaxForChart1={1.25}
+          dataKey2='positiveIncrease'
+          dataKey3='death'
+          chart2Name='Daily cases'
+          chart3Name='Deaths'
+          dataMaxForChart1={0.75}
           XAxisLabelForChart1='Percent increase in cases'
         />
       </div>
@@ -601,7 +605,7 @@ class Sort extends React.Component {
       </div>
     );
   }
-}
+} // Sort
 
 class DomesticSort extends React.Component {
   constructor(props) {
@@ -644,7 +648,6 @@ class DomesticSort extends React.Component {
         colorOfBar: '#8884d8',
       })
     }
-
     return axios
       .get(`${requestURL}` + '/states')
       .then(result => {
@@ -676,7 +679,6 @@ class DomesticSort extends React.Component {
     const { value, submitted, sortedData, colorOfBar } = this.state;
     return (
       <div id='parentElementSort' className='sort'>
-        {/* className='sort' */}
         <form onSubmit={this.Submit}>
           <label>Sort states by</label>
           <select value={this.state.value} onChange={this.Change}>
@@ -697,7 +699,6 @@ class DomesticSort extends React.Component {
               <XAxis type='number' domain={[0, 'dataMax']} orientation='top' />
               <YAxis dataKey="state" type='category' />
               <Tooltip />
-              {/* <Legend /> */}
               <Bar dataKey={value} fill={colorOfBar} />
             </BarChart>
           </ResponsiveContainer>
@@ -705,7 +706,7 @@ class DomesticSort extends React.Component {
       </div>
     );
   }
-}
+} // DomesticSort
 
 class PublicHealth extends React.Component {
   constructor(props) {
@@ -763,8 +764,8 @@ class PublicHealth extends React.Component {
               }
             </span>        
             <span style={{ width: '25%'}}>
-              <a href={item.twitter.split('')[0]==='@'?'https://twitter.com/'+item.twitter.slice(1) :item.twitter}>
-                {item.twitter.split('')[0]==='@'? item.twitter : item.twitter.slice(12,29)}
+              <a href={ (item.twitter) && 'https://twitter.com/' + item.twitter.slice(1) } target='_blank' rel='noopener noreferrer'>
+                { (item.twitter) && item.twitter }
               </a>
             </span>                   
           </div>
@@ -781,7 +782,6 @@ const Home = (props) =>
     <Grid.Row>
       <Grid.Column>
         <div className='CenteredPageContent HomePageFontSize'>
-          {/* <h2>Home page</h2> */}
           <p>Worldwide there have been {props.cases} cases, {props.deaths} deaths, and {props.recovered} recoveries from COVID-19.</p>
           <p>Use the links above to see how the virus is affecting different states and nations, and access state-level public health information.</p>
         </div>
@@ -823,7 +823,7 @@ const Chart = (props) =>
           <Line dataKey={ props.dataKey1 } name={ props.XAxisLabelForChart1 } stroke="#8884d8" />
         </LineChart>
       </div>
-      <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>
+      {/* <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>
         <LineChart data={ props.dataSet2 } width={300} height={300} className='ChartFont'>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" type='category' />
@@ -832,7 +832,17 @@ const Chart = (props) =>
           <Legend />
           <Line dataKey={ props.dataKey2 } name="Deaths" stroke="#d88884" />
         </LineChart>
-      </div>
+      </div> */}
+      <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>
+        <BarChart data={ props.dataSet2 } width={300} height={300} className='ChartFont'>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" type='category'/>
+          <YAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey={ props.dataKey2 } name={ props.chart2Name } stroke="#CCE8E9" />
+        </BarChart>
+      </div>      
       <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>
         <LineChart width={300} height={300} className='ChartFont' data={ props.dataSet3 }>
           <CartesianGrid strokeDasharray="3 3" />
@@ -840,7 +850,7 @@ const Chart = (props) =>
           <YAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
           <Tooltip />
           <Legend />
-          <Line dataKey={ props.dataKey3 } name="Cases" stroke="#8884d8" />
+          <Line dataKey={ props.dataKey3 } name={ props.chart3Name } stroke="#8884d8" />
         </LineChart>
       </div>
     </div>  

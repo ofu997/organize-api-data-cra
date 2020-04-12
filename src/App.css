@@ -340,8 +340,8 @@ nav a:active {
 }
 
 .TableBorder {
-  border: 1px outset #f3f2fb; 
-  /* border-radius: 10%; */
+  /* border: 1px outset #f3f2fb;  */
+  border: 1px outset #d7d4f2; 
 }
 
 .ColumnHeaders {
@@ -366,7 +366,6 @@ nav a:active {
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 5px;
-
 }
 
 .Table {
