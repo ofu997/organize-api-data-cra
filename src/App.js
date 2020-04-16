@@ -60,7 +60,7 @@ class App extends React.Component {
       .then(result => {
         const first20 = result.data.slice(0, 20);
         const first20DescendingOrder = first20.reverse(); 
-        console.log('first20: ' + first20DescendingOrder);
+        // console.log('first20: ' + first20DescendingOrder);
         this.setState({ pressData: first20DescendingOrder, })
       })
   }
@@ -103,8 +103,8 @@ class App extends React.Component {
   render() {
     return (
       <BR>
-        {/* parent element div */}
         <div>
+        {/* |^|^| parent element div */}
           <div className="App">
             <header className="App-header">
               <h3 id='Header'><strong>Virus Visualizer</strong></h3>
@@ -203,8 +203,8 @@ class App extends React.Component {
           <Route path='/state-public-health-resources' exact>
               <PublicHealth />
           </Route>
+        {/* \v/\v/ parent element div */}
         </div>
-        {/* |^|^| parent element div */}
       </BR>
     );
   }
@@ -277,7 +277,7 @@ class Result extends React.Component {
       );
   }
   GraphData = (cases, deaths) => {
-    console.log('load timeline cases: ' + cases);
+    // console.log('load timeline cases: ' + cases);
     const arrayCases = [];
     const arrayDeaths = [];
     const arrayPercentages = [];
@@ -313,7 +313,7 @@ class Result extends React.Component {
       };
       arrayPercentages.push(deathPercentageObj);
     }
-    console.log(arrayPercentages);
+    // console.log(arrayPercentages);
     this.setState({
       timelineCases: arrayCases,
       timelineDeaths: arrayDeaths,
@@ -342,32 +342,32 @@ class Result extends React.Component {
           </Grid.Row>
           <Grid.Row doubling columns={2}>
             <Grid.Column className='ResponsiveText'>
-              <p>Deaths: {deaths}.</p>
-              <p>Deaths today: {todayDeaths}</p>
-              <p>Daily increase in death: <strong>{deathPercentIncrease}%</strong></p>
-              <p>Recoveries: {recovered}</p>
-              <p>Deaths per resolved cases: {deathRecoveryRatio}%</p>
+              <p>Deaths: { deaths.toLocaleString("en-US") }.</p>
+              <p>Deaths today: { todayDeaths.toLocaleString("en-US") }</p>
+              <p>Daily increase in death: <strong>{ deathPercentIncrease }%</strong></p>
+              <p>Recoveries: { recovered.toLocaleString("en-US") }</p>
+              <p>Deaths per resolved cases: { deathRecoveryRatio }%</p>
             </Grid.Column>
             <Grid.Column className='ResponsiveText'>
-              <p>Cases: {cases}</p>
-              <p>Cases today: {todayCases}</p>
-              <p>Daily increase in cases: <strong>{casesPercentIncrease}%</strong></p>
-              <p>{active} active cases, {critical} of which are critical</p>
-              <p>Cases per million: {casesPerOneMillion}</p>
+              <p>Cases: { cases.toLocaleString("en-US") }</p>
+              <p>Cases today: { todayCases.toLocaleString("en-US") }</p>
+              <p>Daily increase in cases: <strong>{ casesPercentIncrease }%</strong></p>
+              <p>{ active.toLocaleString("en-US") } active cases, { critical.toLocaleString("en-US") } of which are critical</p>
+              <p>Cases per million: { casesPerOneMillion.toLocaleString("en-US") }</p>
             </Grid.Column>
           </Grid.Row>
         </Grid>
         
         <Chart 
-          dataSet1={timelinePercentageIncreaseInDeath}
-          dataSet2={timelineDeaths}
-          dataSet3={timelineCases}
+          dataSet1={ timelinePercentageIncreaseInDeath }
+          dataSet2={ timelineDeaths }
+          dataSet3={ timelineCases }
           dataKey1='percentage'
           dataKey2='deaths'
           dataKey3='cases'
           chart2Name='Daily deaths'
           chart3Name='Cases'
-          dataMaxForChart1={2.00}
+          dataMaxForChart1={ 2.00 }
           XAxisLabelForChart1='Percent increase in deaths'
         />
       </div>
@@ -420,7 +420,7 @@ class DomesticResult extends React.Component {
   MakeTimeline = (data) => {
     const percentageArrayGoingToLoop = [];
     let standardizedPercentage;
-    for (let i = 1; i < data.length - 1; i++) {
+    for (let i = 1; i < data.length; i++) {
       const percentIncrease = data[i - 1].positive === 0 && data[i].positive === 0 ? 0
         : 100 * ((data[i].positive - data[i - 1].positive) / data[i - 1].positive).toFixed(2);
       if (percentIncrease === Infinity || percentIncrease > 200) {
@@ -439,7 +439,7 @@ class DomesticResult extends React.Component {
     this.setState({
       percentageIncreaseInCases: percentageArrayGoingToLoop,
     })
-    console.log(this.state.percentageIncreaseInCases);
+    // console.log(this.state.percentageIncreaseInCases);
   }
   componentDidMount() {
     this.LoadStateData();
@@ -456,47 +456,47 @@ class DomesticResult extends React.Component {
           <Grid.Row>
             <Grid.Column className='ResponsiveText DomesticResultText'>
               <p>
-                In {state}, as of {readableDateChecked} there have been {cases} confirmed cases out of {totalTested} tests
+                In { state }, as of { readableDateChecked } there have been { cases.toLocaleString("en-US") } confirmed cases out of { totalTested.toLocaleString("en-US") } tests
               </p>
               <p>
-                Cases today: {todayCases}
+                Cases today: { todayCases.toLocaleString("en-US") }
               </p>
               <p>
-                Daily increase in cases: <strong>{casesPercentIncrease}%</strong>
+                Daily increase in cases: <strong>{ casesPercentIncrease }%</strong>
               </p>
               {
                 pendingCases ?
-                  <p>{pendingCases} tests are pending</p>
+                  <p>{ pendingCases.toLocaleString("en-US") } tests are pending</p>
                   : null
               }
               {
                 hospitalized ?
-                  <p>{hospitalized} are hospitalized. </p>
+                  <p>{ hospitalized.toLocaleString("en-US") } are hospitalized. </p>
                   : null
               }
               <p>
-                Deaths: {deaths}
+                Deaths: { deaths.toLocaleString("en-US") }
               </p>
               <p>
-                Deaths today: {todayDeaths}
+                Deaths today: { todayDeaths.toLocaleString("en-US") } 
               </p>
               <p>
-                Daily increase in deaths: <strong>{deathPercentIncrease}%</strong>
+                Daily increase in deaths: <strong>{ deathPercentIncrease }%</strong>
               </p>
             </Grid.Column>
           </Grid.Row>
         </Grid>
 
         <Chart 
-          dataSet1={percentageIncreaseInCases}
-          dataSet2={allData}
-          dataSet3={allData}
+          dataSet1={ percentageIncreaseInCases }
+          dataSet2={ allData }
+          dataSet3={ allData }
           dataKey1='percentIncreaseProp'
           dataKey2='positiveIncrease'
           dataKey3='death'
           chart2Name='Daily cases'
           chart3Name='Deaths'
-          dataMaxForChart1={0.75}
+          dataMaxForChart1={ 0.75 }
           XAxisLabelForChart1='Percent increase in cases'
         />
       </div>
@@ -593,12 +593,12 @@ class Sort extends React.Component {
         {
           submitted &&
           <ResponsiveContainer width='80%' height={1500}>
-            <BarChart layout='vertical' data={sortedData} className='ChartFont'>
+            <BarChart layout='vertical' data={ sortedData} className='ChartFont'>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type='number' domain={[0, 'dataMax']} orientation='top' />
               <YAxis dataKey="country" type='category' />
               <Tooltip />
-              <Bar dataKey={value} fill={colorOfBar} />
+              <Bar dataKey={ value } fill={ colorOfBar } />
             </BarChart>
           </ResponsiveContainer>
         }
@@ -651,7 +651,7 @@ class DomesticSort extends React.Component {
     return axios
       .get(`${requestURL}` + '/states')
       .then(result => {
-        const sortedStates = result.data.sort(this.SortStates(value));
+        const sortedStates = result.data.slice(1).sort(this.SortStates(value));
         this.GraphSortedData(sortedStates);
       })
   }
@@ -671,17 +671,14 @@ class DomesticSort extends React.Component {
       sortedData: data,
     })
   }
-  componentDidMount() {
-    this.LoadSortData();
-  }
 
   render() {
     const { value, submitted, sortedData, colorOfBar } = this.state;
     return (
       <div id='parentElementSort' className='sort'>
-        <form onSubmit={this.Submit}>
+        <form onSubmit={ this.Submit }>
           <label>Sort states by</label>
-          <select value={this.state.value} onChange={this.Change}>
+          <select value={ this.state.value } onChange={ this.Change }>
             <option value=""></option>
             <option value="cases">cases</option>
             <option value="todayCases">cases today</option>
@@ -693,13 +690,13 @@ class DomesticSort extends React.Component {
         </form>
         {
           submitted &&
-          <ResponsiveContainer width='80%' height={1500}>
-            <BarChart layout='vertical' data={sortedData} className='ChartFont'>
+          <ResponsiveContainer width='80%' height={ 1500 }>
+            <BarChart layout='vertical' data={ sortedData } className='ChartFont'>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type='number' domain={[0, 'dataMax']} orientation='top' />
               <YAxis dataKey="state" type='category' />
               <Tooltip />
-              <Bar dataKey={value} fill={colorOfBar} />
+              <Bar dataKey={ value } fill={ colorOfBar } />
             </BarChart>
           </ResponsiveContainer>
         }
@@ -732,7 +729,6 @@ class PublicHealth extends React.Component {
     return (
       <div className='Table'>
       <div className='TableRow ColumnHeaders TablePadding TableRowFontSize'>
-        {/* <p>Public health info goes here</p> */}
         <span style={{ width: '20%' }}>
             {/* State */}
         </span>
@@ -753,13 +749,13 @@ class PublicHealth extends React.Component {
               { Object.values(ConvertStateNameAndID(item.state)) }
             </span>
             <span style={{ width: '30%', borderRight: '1px dashed #1db954' }}>
-              <a href={item.covid19Site} target='_blank' rel='noopener noreferrer'>{ item.covid19Site.slice(8,28) }</a>
+              <a href={ item.covid19Site } target='_blank' rel='noopener noreferrer'>{ item.covid19Site.slice(8) }</a>
             </span>
             <span style={{ width: '25%', borderRight: '1px dashed #1db954' }}>
               {
                 (item.covid19SiteSecondary!==item.covid19Site && (item.covid19SiteSecondary)) && 
-                  <a href={item.covid19SiteSecondary} target='_blank' rel='noopener noreferrer'>
-                    { item.covid19SiteSecondary.slice(8,28) }
+                  <a href={ item.covid19SiteSecondary } target='_blank' rel='noopener noreferrer'>
+                    { item.covid19SiteSecondary.slice(8) }
                   </a>
               }
             </span>        
@@ -782,7 +778,7 @@ const Home = (props) =>
     <Grid.Row>
       <Grid.Column>
         <div className='CenteredPageContent HomePageFontSize'>
-          <p>Worldwide there have been {props.cases} cases, {props.deaths} deaths, and {props.recovered} recoveries from COVID-19.</p>
+          <p>Worldwide there have been { props.cases.toLocaleString("en-US") } cases, { props.deaths.toLocaleString("en-US") } deaths, and { props.recovered.toLocaleString("en-US") } recoveries from COVID-19.</p>
           <p>Use the links above to see how the virus is affecting different states and nations, and access state-level public health information.</p>
         </div>
       </Grid.Column>
@@ -790,8 +786,10 @@ const Home = (props) =>
     <Grid.Row>
       <Grid.Column>
         <div className='CenteredNewsContent'>
-          <h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      In the news</h3>
+          <h3>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            In the news
+          </h3>
           <News
             listOfArticles={props.pressData}
           />
@@ -823,16 +821,6 @@ const Chart = (props) =>
           <Line dataKey={ props.dataKey1 } name={ props.XAxisLabelForChart1 } stroke="#8884d8" />
         </LineChart>
       </div>
-      {/* <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>
-        <LineChart data={ props.dataSet2 } width={300} height={300} className='ChartFont'>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" type='category' />
-          <YAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
-          <Tooltip />
-          <Legend />
-          <Line dataKey={ props.dataKey2 } name="Deaths" stroke="#d88884" />
-        </LineChart>
-      </div> */}
       <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>
         <BarChart data={ props.dataSet2 } width={300} height={300} className='ChartFont'>
           <CartesianGrid strokeDasharray="3 3" />
@@ -840,7 +828,7 @@ const Chart = (props) =>
           <YAxis type="number" domain={[0, dataMax => (dataMax * 1.25)]} />
           <Tooltip />
           <Legend />
-          <Bar dataKey={ props.dataKey2 } name={ props.chart2Name } stroke="#CCE8E9" />
+          <Bar dataKey={ props.dataKey2 } name={ props.chart2Name } stroke="#91A5A6"/>
         </BarChart>
       </div>      
       <div className='ChartPosition flexboxForCharts' style={{ marginRight: 50 }}>

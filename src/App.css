@@ -341,14 +341,14 @@ nav a:active {
 
 .TableBorder {
   /* border: 1px outset #f3f2fb;  */
-  border: 1px outset #d7d4f2; 
+  border: 1px outset #b3ade6;
 }
 
 .ColumnHeaders {
   /* background-color: linen; */
   /* line-height: 8px !important; */
-  line-height: 12px !important;
-  margin-bottom: -15px !important;
+  line-height: 18px !important;
+  margin-bottom: -20px !important;
   /* padding: 0px !important; */
   border: none !important;   
 
