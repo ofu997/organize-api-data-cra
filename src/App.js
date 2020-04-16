@@ -342,18 +342,18 @@ class Result extends React.Component {
           </Grid.Row>
           <Grid.Row doubling columns={2}>
             <Grid.Column className='ResponsiveText'>
-              <p>Deaths: { deaths.toLocaleString("en-US") }.</p>
-              <p>Deaths today: { todayDeaths.toLocaleString("en-US") }</p>
+              <p>Deaths: { deaths }.</p>
+              <p>Deaths today: { todayDeaths }</p>
               <p>Daily increase in death: <strong>{ deathPercentIncrease }%</strong></p>
-              <p>Recoveries: { recovered.toLocaleString("en-US") }</p>
+              <p>Recoveries: { recovered }</p>
               <p>Deaths per resolved cases: { deathRecoveryRatio }%</p>
             </Grid.Column>
             <Grid.Column className='ResponsiveText'>
-              <p>Cases: { cases.toLocaleString("en-US") }</p>
-              <p>Cases today: { todayCases.toLocaleString("en-US") }</p>
+              <p>Cases: { cases }</p>
+              <p>Cases today: { todayCases }</p>
               <p>Daily increase in cases: <strong>{ casesPercentIncrease }%</strong></p>
-              <p>{ active.toLocaleString("en-US") } active cases, { critical.toLocaleString("en-US") } of which are critical</p>
-              <p>Cases per million: { casesPerOneMillion.toLocaleString("en-US") }</p>
+              <p>{ active } active cases, { critical } of which are critical</p>
+              <p>Cases per million: { casesPerOneMillion }</p>
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -456,29 +456,29 @@ class DomesticResult extends React.Component {
           <Grid.Row>
             <Grid.Column className='ResponsiveText DomesticResultText'>
               <p>
-                In { state }, as of { readableDateChecked } there have been { cases.toLocaleString("en-US") } confirmed cases out of { totalTested.toLocaleString("en-US") } tests
+                In { state }, as of { readableDateChecked } there have been { cases } confirmed cases out of { totalTested } tests
               </p>
               <p>
-                Cases today: { todayCases.toLocaleString("en-US") }
+                Cases today: { todayCases }
               </p>
               <p>
                 Daily increase in cases: <strong>{ casesPercentIncrease }%</strong>
               </p>
               {
                 pendingCases ?
-                  <p>{ pendingCases.toLocaleString("en-US") } tests are pending</p>
+                  <p>{ pendingCases } tests are pending</p>
                   : null
               }
               {
                 hospitalized ?
-                  <p>{ hospitalized.toLocaleString("en-US") } are hospitalized. </p>
+                  <p>{ hospitalized } are hospitalized. </p>
                   : null
               }
               <p>
-                Deaths: { deaths.toLocaleString("en-US") }
+                Deaths: { deaths }
               </p>
               <p>
-                Deaths today: { todayDeaths.toLocaleString("en-US") } 
+                Deaths today: { todayDeaths } 
               </p>
               <p>
                 Daily increase in deaths: <strong>{ deathPercentIncrease }%</strong>
