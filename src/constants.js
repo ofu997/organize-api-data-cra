@@ -1,12 +1,12 @@
 const requestURL = 'https://corona.lmao.ninja';
-const summary = '/all';
-const listData = 'https://corona.lmao.ninja/countries'
+const summary = '/v2/all';
+const listData = 'https://corona.lmao.ninja/v2/countries'
 
 const domesticURL = 'https://covidtracking.com/api/states';
-// const domesticPress = 'https://covidtracking.com/api/press';
 const domesticPress = 'https://mega-nap.herokuapp.com/api/ofu997/news/press';
 const latestFromDomesticState = '/daily?state=';
 const publicHealth = 'https://covidtracking.com/api/states/info';
+
 const ConvertStateNameAndID = userInput => {
   const input=userInput.toLowerCase(); 
   switch(input) {

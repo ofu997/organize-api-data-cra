@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
 import axios from 'axios';
-import { Grid, Button, Select, Card, Table } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import { requestURL, summary, listData, domesticURL, latestFromDomesticState, ConvertStateNameAndID, domesticPress, publicHealth } from './constants';
 import { BarChart, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, ResponsiveContainer } from 'recharts';
-import { BrowserRouter as BR, Route, Link, Switch, Router } from 'react-router-dom';
+import { BrowserRouter as BR, Route, Link } from 'react-router-dom';
 
 class App extends React.Component {
   constructor(props) {
@@ -77,20 +77,20 @@ class App extends React.Component {
     })
   }
   Submit = (event) => {
-    const newNation = [this.state.lookup];
+    const Nation = [this.state.lookup];
     this.setState({
       lookup: this.state.lookup,
       submitted: true,
-      worldLookupArray: newNation.concat(this.state.worldLookupArray),
+      worldLookupArray: Nation.concat(this.state.worldLookupArray),
     });
     event.preventDefault();
   }
   DomesticSubmit = (event) => {
-    const newUSAState = [this.state.domesticLookup];
+    const USAState = [this.state.domesticLookup];
     this.setState({
       domesticLookup: this.state.domesticLookup,
       domesticSubmitted: true,
-      domesticLookupArray: newUSAState.concat(this.state.domesticLookupArray),
+      domesticLookupArray: USAState.concat(this.state.domesticLookupArray),
     });
     // console.log(this.state.domesticLookupArray);
     event.preventDefault();
@@ -136,10 +136,10 @@ class App extends React.Component {
           <Grid columns='one'>
             <Route path='/' exact>
               <Home
-                cases={this.state.cases}
-                deaths={this.state.deaths}
-                recovered={this.state.recovered}
-                pressData={this.state.pressData}
+                cases={ this.state.cases }
+                deaths={ this.state.deaths }
+                recovered={ this.state.recovered }
+                pressData={ this.state.pressData }
               />
             </Route>
             {/* international */}
@@ -148,17 +148,17 @@ class App extends React.Component {
                 <Grid.Column>
                   <div className="searchDiv">
                     <Search
-                      onSubmit={this.Submit}
-                      value={this.state.lookup}
-                      onChange={this.onChange}
+                      onSubmit={ this.Submit }
+                      value={ this.state.lookup }
+                      onChange={ this.onChange }
                       placeholder="Search nation"
                     />
                     {
                       this.state.worldLookupArray.map(item =>
-                        <Result
-                          name={item}
-                          key={item}
-                          listOfNations={this.state.worldLookupArray}
+                        <Nation
+                          name={ item }
+                          key={ item }
+                          listOfNations={ this.state.worldLookupArray }
                         />
                       )
                     }
@@ -173,16 +173,16 @@ class App extends React.Component {
                 <Grid.Column>
                   <div className="searchDiv">
                     <Search
-                      onSubmit={this.DomesticSubmit}
-                      value={this.state.domesticLookup}
-                      onChange={this.DomesticOnChange}
+                      onSubmit={ this.DomesticSubmit }
+                      value={ this.state.domesticLookup }
+                      onChange={ this.DomesticOnChange }
                       placeholder="Search state"
                     />
                     {
                       this.state.domesticLookupArray.map(item =>
-                        <DomesticResult
-                          name={item}
-                          key={item}
+                        <USAState
+                          name={ item }
+                          key={ item }
                         />
                       )
                     }
@@ -211,15 +211,15 @@ class App extends React.Component {
 } // App
 
 const Search = (props) =>
-  <form onSubmit={props.onSubmit}>
+  <form onSubmit={ props.onSubmit }>
     <div>
       <input
         type="text"
-        placeholder={props.placeholder}
-        value={props.value}
-        onChange={props.onChange}
-        array={props.array}
-        show={props.show}
+        placeholder={ props.placeholder }
+        value={ props.value }
+        onChange={ props.onChange }
+        array={ props.array }
+        show={ props.show }
       />
       <button type="submit" className='SubmitButton'>
         Submit
@@ -227,7 +227,7 @@ const Search = (props) =>
     </div>
   </form>
 
-class Result extends React.Component {
+class Nation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -250,8 +250,9 @@ class Result extends React.Component {
   }
   LoadNationData = () => {
     return axios
-      .get(`${listData}` + '/' + `${this.props.name}`)
+      .get(`${listData}/${this.props.name}`)
       .then(result => {
+        console.log(result.data);
         this.setState({
           country: result.data.country,
           flag: result.data.countryInfo.flag,
@@ -266,10 +267,11 @@ class Result extends React.Component {
           deathsPerOneMillion: result.data.deathsPerOneMillion,
         })
       })
+      
   }
   LoadTimeLineCases = () => {
     return axios
-      .get(`${requestURL}` + '/v2/historical/' + `${this.props.name}`)
+      .get(`${requestURL}/v2/historical/${this.props.name}`)
       .then(
         result => {
           this.GraphData(result.data.timeline.cases, result.data.timeline.deaths);
@@ -277,7 +279,7 @@ class Result extends React.Component {
       );
   }
   GraphData = (cases, deaths) => {
-    // console.log('load timeline cases: ' + cases);
+    console.log('load timeline cases: ' + cases);
     const arrayCases = [];
     const arrayDeaths = [];
     const arrayPercentages = [];
@@ -327,17 +329,17 @@ class Result extends React.Component {
 
   render() {
     const { country, cases, todayCases, deaths, todayDeaths, recovered,
-      active, critical, casesPerOneMillion, deathsPerOneMillion,
-      timelineCases, timelineDeaths, timelinePercentageIncreaseInDeath, flag } = this.state;
-    const deathPercentIncrease = ((this.state.todayDeaths / (this.state.deaths - this.state.todayDeaths)) * 100).toFixed(2);
-    const casesPercentIncrease = ((this.state.todayCases / (this.state.cases - this.state.todayCases)) * 100).toFixed(2);
+      active, critical, casesPerOneMillion, timelineCases,
+      timelineDeaths, timelinePercentageIncreaseInDeath, flag } = this.state;
+    const deathPercentIncrease = ( (this.state.todayDeaths / (this.state.deaths - this.state.todayDeaths) ) * 100).toFixed(2);
+    const casesPercentIncrease = ( (this.state.todayCases / (this.state.cases - this.state.todayCases) ) * 100).toFixed(2);
     const deathRecoveryRatio = ( 100 * ( deaths / ( deaths + recovered ) ) ).toFixed(2);
     return (
       <div>
         <Grid style={{ marginTop: 1 }} >
           <Grid.Row columns={1} style={{ maxHeight: 20 }}>
             <Grid.Column className='ResponsiveText FlagAndCountry' >
-              <img src={flag} /><p id='NameOfNation'>{country}</p>
+              <img src={ flag } alt={ flag } /><p id='NameOfNation'>{ country }</p>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row doubling columns={2}>
@@ -373,9 +375,9 @@ class Result extends React.Component {
       </div>
     );
   };
-} // Result
+} // Nation
 
-class DomesticResult extends React.Component {
+class USAState extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -454,9 +456,9 @@ class DomesticResult extends React.Component {
       <div>
         <Grid columns='one' style={{ marginTop: 5 }}>
           <Grid.Row>
-            <Grid.Column className='ResponsiveText DomesticResultText'>
+            <Grid.Column className='ResponsiveText USAStateText'>
               <p>
-                In { state }, as of { readableDateChecked } there have been { cases } confirmed cases out of { totalTested } tests
+                In { state }, as of { readableDateChecked } there have been <strong>{ cases }</strong> confirmed cases out of { totalTested } tests
               </p>
               <p>
                 Cases today: { todayCases }
@@ -502,7 +504,7 @@ class DomesticResult extends React.Component {
       </div>
     );
   };
-} // DomesticResult
+} // USAState
 
 class Sort extends React.Component {
   constructor(props) {
@@ -552,7 +554,7 @@ class Sort extends React.Component {
       })
     }
     return axios
-      .get(`${requestURL}` + '/countries?sort=' + `${this.state.value}`)
+      .get(`${requestURL}/v2/countries?sort=${this.state.value}`)
       .then(result => {
         const top50Nations = [];
         for (let i = 0; i < 50; i++) {
@@ -566,17 +568,17 @@ class Sort extends React.Component {
       sortedData: data,
     })
   }
-  componentDidMount() {
-    this.LoadSortData();
-  }
+  // componentDidMount() {
+  //   this.LoadSortData();
+  // }
 
   render() {
     const { value, submitted, sortedData, colorOfBar } = this.state;
     return (
       <div id='parentElementSort' className='sort'>
-        <form onSubmit={this.Submit}>
+        <form onSubmit={ this.Submit }>
           <label>Sort nations by</label>
-          <select value={this.state.value} onChange={this.Change}>
+          <select value={ this.state.value } onChange={ this.Change }>
             <option value=""></option>
             <option value="cases">cases</option>
             <option value="todayCases">cases today</option>
@@ -593,7 +595,7 @@ class Sort extends React.Component {
         {
           submitted &&
           <ResponsiveContainer width='80%' height={1500}>
-            <BarChart layout='vertical' data={ sortedData} className='ChartFont'>
+            <BarChart layout='vertical' data={ sortedData } className='ChartFont'>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type='number' domain={[0, 'dataMax']} orientation='top' />
               <YAxis dataKey="country" type='category' />
@@ -649,9 +651,9 @@ class DomesticSort extends React.Component {
       })
     }
     return axios
-      .get(`${requestURL}` + '/states')
+      .get(`${requestURL}/v2/states`)
       .then(result => {
-        const sortedStates = result.data.slice(1).sort(this.SortStates(value));
+        const sortedStates = result.data.sort(this.SortStates(value));
         this.GraphSortedData(sortedStates);
       })
   }
@@ -690,7 +692,7 @@ class DomesticSort extends React.Component {
         </form>
         {
           submitted &&
-          <ResponsiveContainer width='80%' height={ 1500 }>
+          <ResponsiveContainer width='80%' height={1500}>
             <BarChart layout='vertical' data={ sortedData } className='ChartFont'>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type='number' domain={[0, 'dataMax']} orientation='top' />
@@ -745,7 +747,7 @@ class PublicHealth extends React.Component {
       {
         this.state.publicHealthArray.map(item =>
           <div key={ item.state } className='TableRowFontSize TableRow TableRowColors TablePadding TableBorder'>
-            <span style={{ width: '20%', borderRight: '1px dashed #1db954', paddingLeft: 5}}>
+            <span style={{ width: '20%', borderRight: '1px dashed #1db954', paddingLeft: 5 }}>
               { Object.values(ConvertStateNameAndID(item.state)) }
             </span>
             <span style={{ width: '30%', borderRight: '1px dashed #1db954' }}>
@@ -791,7 +793,7 @@ const Home = (props) =>
             In the news
           </h3>
           <News
-            listOfArticles={props.pressData}
+            listOfArticles={ props.pressData }
           />
         </div>
       </Grid.Column>
@@ -803,7 +805,7 @@ const News = (props) =>
   props.listOfArticles.map(item =>
     <div key={ item._id }>
       <ul className='NewsFontSize'>
-        <p>&#8226;{item.publication}: <a href={item.url} target="_blank" rel='noopener noreferrer'>{item.title}</a></p>
+        <p>&#8226;{ item.publication }: <a href={ item.url } target="_blank" rel='noopener noreferrer'>{ item.title }</a></p>
       </ul>
     </div>
   )
