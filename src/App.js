@@ -158,7 +158,6 @@ class App extends React.Component {
                         <Nation
                           name={ item }
                           key={ item }
-                          listOfNations={ this.state.worldLookupArray }
                         />
                       )
                     }
@@ -252,7 +251,7 @@ class Nation extends React.Component {
     return axios
       .get(`${listData}/${this.props.name}`)
       .then(result => {
-        console.log(result.data);
+        // console.log(result.data);
         this.setState({
           country: result.data.country,
           flag: result.data.countryInfo.flag,
@@ -279,7 +278,6 @@ class Nation extends React.Component {
       );
   }
   GraphData = (cases, deaths) => {
-    console.log('load timeline cases: ' + cases);
     const arrayCases = [];
     const arrayDeaths = [];
     const arrayPercentages = [];
@@ -568,9 +566,6 @@ class Sort extends React.Component {
       sortedData: data,
     })
   }
-  // componentDidMount() {
-  //   this.LoadSortData();
-  // }
 
   render() {
     const { value, submitted, sortedData, colorOfBar } = this.state;
@@ -692,7 +687,7 @@ class DomesticSort extends React.Component {
         </form>
         {
           submitted &&
-          <ResponsiveContainer width='80%' height={1500}>
+          <ResponsiveContainer width='80%' height={2000}>
             <BarChart layout='vertical' data={ sortedData } className='ChartFont'>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type='number' domain={[0, 'dataMax']} orientation='top' />

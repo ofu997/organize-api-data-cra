@@ -5,7 +5,7 @@ const listData = 'https://corona.lmao.ninja/v2/countries'
 const domesticURL = 'https://covidtracking.com/api/states';
 const domesticPress = 'https://mega-nap.herokuapp.com/api/ofu997/news/press';
 const latestFromDomesticState = '/daily?state=';
-const publicHealth = 'https://covidtracking.com/api/states/info';
+const publicHealth = 'https://covidtracking.com/api/v1/states/info.json';
 
 const ConvertStateNameAndID = userInput => {
   const input=userInput.toLowerCase(); 
