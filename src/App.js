@@ -1,11 +1,11 @@
-import React from 'react';
-import './App.css';
 import axios from 'axios';
-import { Grid } from 'semantic-ui-react';
+import React from 'react';
+import { BrowserRouter as BR, Link, Route } from 'react-router-dom';
+import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import 'semantic-ui-css/semantic.min.css';
-import { requestURL, summary, listData, domesticURL, latestFromDomesticState, ConvertStateNameAndID, domesticPress, publicHealth } from './constants';
-import { BarChart, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, ResponsiveContainer } from 'recharts';
-import { BrowserRouter as BR, Route, Link } from 'react-router-dom';
+import { Grid } from 'semantic-ui-react';
+import './App.css';
+import { ConvertStateNameAndID, domesticPress, domesticURL, latestFromDomesticState, listData, publicHealth, requestURL, summary } from './constants';
 
 class App extends React.Component {
   constructor(props) {
@@ -398,7 +398,7 @@ class USAState extends React.Component {
   LoadStateData = () => {
     const abbr = ConvertStateNameAndID(this.props.name);
     return axios
-      .get(`${domesticURL}${latestFromDomesticState}${Object.keys(abbr)}`)
+      .get(`${domesticURL}/${Object.keys(abbr)}${latestFromDomesticState}`)
       .then(result => {
         const recentData = result.data[0];
         this.setState({

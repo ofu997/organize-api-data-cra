@@ -2,9 +2,9 @@ const requestURL = 'https://corona.lmao.ninja';
 const summary = '/v2/all';
 const listData = 'https://corona.lmao.ninja/v2/countries'
 
-const domesticURL = 'https://covidtracking.com/api/states';
+const domesticURL = 'https://covidtracking.com/api/v1/states';
 const domesticPress = 'https://mega-nap.herokuapp.com/api/ofu997/news/press';
-const latestFromDomesticState = '/daily?state=';
+const latestFromDomesticState = '/daily.json';
 const publicHealth = 'https://covidtracking.com/api/v1/states/info.json';
 
 const ConvertStateNameAndID = userInput => {
@@ -241,6 +241,4 @@ const ConvertStateNameAndID = userInput => {
 
 
 
-export { requestURL , summary, listData, domesticURL, 
-  latestFromDomesticState, ConvertStateNameAndID, 
-  domesticPress, publicHealth };
+export { requestURL, summary, listData, domesticURL, latestFromDomesticState, ConvertStateNameAndID, domesticPress, publicHealth };
