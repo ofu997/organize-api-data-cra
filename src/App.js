@@ -396,13 +396,18 @@ class USAState extends React.Component {
     this.LoadStateData = this.LoadStateData.bind(this);
   }
   LoadStateData = () => {
-    const abbr = ConvertStateNameAndID(this.props.name);
+    const stateNameAndAbbr = ConvertStateNameAndID(this.props.name);
+    const upperCaseAbbr = Object.keys(stateNameAndAbbr);
+    console.log('uppercase: '+upperCaseAbbr)
+    console.log('typeof' + typeof upperCaseAbbr)
+    const lowerCaseAbbr = stateNameAndAbbr[0].toLowerCase(); 
     return axios
-      .get(`${domesticURL}/${Object.keys(abbr)}${latestFromDomesticState}`)
+      .get(`${domesticURL}/${lowerCaseAbbr}${latestFromDomesticState}`)
       .then(result => {
         const recentData = result.data[0];
+        console.log('recentData: '+recentData);
         this.setState({
-          state: Object.values(abbr),
+          state: Object.values(stateNameAndAbbr),
           cases: recentData.positive,
           todayCases: recentData.positiveIncrease,
           testedNegative: recentData.negative,
@@ -411,10 +416,11 @@ class USAState extends React.Component {
           deaths: recentData.death,
           todayDeaths: recentData.deathIncrease,
           totalTested: recentData.total,
-          readableDateChecked: recentData.dateChecked.replace("T20:00:00Z", " "),
+          readableDateChecked: recentData.lastUpdateEt,
           allData: result.data.reverse(),
         });
         this.MakeTimeline(this.state.allData);
+        console.log('tracked state data: '+this.state); 
       })
   }
   MakeTimeline = (data) => {
@@ -429,7 +435,7 @@ class USAState extends React.Component {
       else {
         standardizedPercentage = percentIncrease;
       }
-      const readableDate = data[i].dateChecked.replace("T20:00:00Z", " ");
+      const readableDate = data[i].lastUpdateEt;
       const casesPercentageObj = {
         date: readableDate,
         percentIncreaseProp: standardizedPercentage,
@@ -743,7 +749,7 @@ class PublicHealth extends React.Component {
         this.state.publicHealthArray.map(item =>
           <div key={ item.state } className='TableRowFontSize TableRow TableRowColors TablePadding TableBorder'>
             <span style={{ width: '20%', borderRight: '1px dashed #1db954', paddingLeft: 5 }}>
-              { Object.values(ConvertStateNameAndID(item.state)) }
+              { ConvertStateNameAndID(item.state)[1] }
             </span>
             <span style={{ width: '30%', borderRight: '1px dashed #1db954' }}>
               <a href={ item.covid19Site } target='_blank' rel='noopener noreferrer'>{ item.covid19Site.slice(8) }</a>
