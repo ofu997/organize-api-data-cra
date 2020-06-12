@@ -397,17 +397,14 @@ class USAState extends React.Component {
   }
   LoadStateData = () => {
     const stateNameAndAbbr = ConvertStateNameAndID(this.props.name);
-    const upperCaseAbbr = Object.keys(stateNameAndAbbr);
-    console.log('uppercase: '+upperCaseAbbr)
-    console.log('typeof' + typeof upperCaseAbbr)
     const lowerCaseAbbr = stateNameAndAbbr[0].toLowerCase(); 
+    const stateName = stateNameAndAbbr[1]; 
     return axios
       .get(`${domesticURL}/${lowerCaseAbbr}${latestFromDomesticState}`)
       .then(result => {
         const recentData = result.data[0];
-        console.log('recentData: '+recentData);
         this.setState({
-          state: Object.values(stateNameAndAbbr),
+          state: stateName,
           cases: recentData.positive,
           todayCases: recentData.positiveIncrease,
           testedNegative: recentData.negative,
