@@ -1,7 +1,5 @@
 .App {
-  /* text-align: center; */
   min-width: 100%;
-  /* align-content: center; */
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -16,7 +14,6 @@
   font-size: calc(5px + 2vmin);
   color: white;
   padding-top: 2em;
-  /* tip: CSS-Tricks: The min-width property always overrides the width property whether followed before or after width in your declaration.  */
   padding-bottom: 12px;
   font-weight: 200;
 }
@@ -45,47 +42,23 @@
   }
 }
 
-.searchDiv {
-  /* margin: 15% 0% 10% 0%; */
-  /* border: 5px solid red; */
-  max-height: 5%;
+.PageLayout {
   margin: 5% auto 10% auto;
   width: 90%;
 }
 
 .CenteredPageContent {
-  /* margin: 15% 0% 10% 0%; */
-  /* border: 5px solid red; */
-  /* max-height: 5%; */
   margin: 5% 10% 0% 10%;
-  /* width: 50%; */
-  /* margin-left: 10%; */
-  /* border: 5px solid orange;  */
-  /* border- */
 }
 
 
 
 .displayResult {
-  /* border: 5px solid red; */
   margin: 0px 20px;
 }
 
-/* may not need */
 #rowForWorldResult {
-  display: flex; 
   justify-content: space-between;
-}
-
-/* not needed */
-.WorldResult {
-  /* border: 0.25pt solid #474a52; */
-  /* border-radius: 1em; */
-  /* margin: 0em 0.1em; */
-  /* max-width: 45%;  */
-  padding: 0.5em 1em;
-  font-size: 0.6em;
-  /* line-height: 4px; */
 }
 
 /*********** Responsive font sizes */
@@ -93,7 +66,7 @@
   /* 
   font-size: calc([minimum size] + ([maximum size] - [minimum size]) * ((100vw - [minimum viewport width]) / ([maximum viewport width] - [minimum viewport width])));
   */
-  font-size: calc(10px + (14-5) * ((100vw - 500px) / (1600-400)));  
+  font-size: calc(7px + (14-5) * ((100vw - 500px) / (1600-400)));  
 }
 .NavFontSize {
   font-size: calc(6px + (11-3) * ((100vw - 500px) / (1600-400)));  
@@ -132,19 +105,13 @@ font-size: calc(11px + (18-11) * ((100vw - 500px) / (1600-400)));
 .TableRowFontSize a:link{
   color: darkolivegreen;
 }
-/* mobile view: good */
-/* desktop view: right chart was cut off, now good */
-/* attempt: switching max-width and width to 95vw*/
+
 .ChartPosition {
 	left: 50%;
 	margin-left: -50vw;
   margin-right: -50vw;
-  
   max-width: 95vw;
-  /* max-width: 50vw; */
   width: 95vw;  
-  /* width: 25vw; */
-
 	position: relative;
   right: 50%;
   float: center;
@@ -162,11 +129,9 @@ font-size: calc(11px + (18-11) * ((100vw - 500px) / (1600-400)));
   .parentDivForCharts {
     display: flex; 
     justify-content: space-between;
-    /* justify-content: space-around; */
   }
   .flexboxForCharts {
     flex: 1;
-    /* justify-content: center; */
   }
 }
 
@@ -199,12 +164,6 @@ font-size: calc(11px + (18-11) * ((100vw - 500px) / (1600-400)));
 }
 
 .SubmitButton {
-  /* font-size: 1em; */
-  /* border-top: 1px solid #8884d8;
-  border-right: 1px solid #d88884;
-  border-bottom: 1px solid #d8888f;
-  border-left: 1px solid #8884d8; */
-  /* padding: 3px; */
   border-radius: 10%;
   border: 1px solid #8884d8;
 }
@@ -223,7 +182,6 @@ nav a:link {
 }
 
 nav a {
-  /* display: inline-block; */
   padding: 5px;
   border-radius: 10% 10% 0% 0%;
 }
@@ -234,7 +192,6 @@ nav a:visited {
 
 nav a:hover {
   color: #1db954;
-  /* background-color: #0239a7; */
   background-color: #52565c;
 }
 
@@ -242,27 +199,12 @@ nav a:active {
   color: #282c34;
 }
 
-/* .nav-links {
-  width: 40%;
-  display: flex;
-  justify-content: space-around;
-  justify-content: flex-end;try this 
-  align-items: center;
-  list-style: none;
-  font-size: 1.25em;
-} */
-
 .nav-links {
-  /* tip: don't set width on links */
-  /* width: 40%; */
   display: flex;
   /* tip: this also moved nav links to the left */
   justify-content: space-around;
-  /* justify-content: flex-start; */
   align-items: center;
   list-style: none;
-  /* font-size: 1.25em; */
-  /* border: 2px solid white;  */
   margin-right: 10%;
 }
 
@@ -271,17 +213,9 @@ nav a:active {
   flex: 1;
 }
 
-/* .nav-links p {
-  padding: 1px 1px 1px 1px;
-} */
-
 .style-links {
   padding: 15px;
 }
-
-/* .style-links:has(>a:active) {
-  background-color: #0239a7;
-} */
 
 .style-links > a:active {
   background-color: #0239a7; 
@@ -291,8 +225,6 @@ nav a:active {
 
 .CenteredNewsContent {
   margin: 0% 5% 10% 3%;
-  /* border: 5px solid orange; */
-  /* background-color: #f4f4f4; */
   background-color: #f3f2fb;
   padding: 5% 0%;
 }
@@ -302,36 +234,28 @@ nav a:active {
 }
 
 .USAStateText {
-  line-height: 0.7em;
   margin: 0;
-
 }
 
+.USAStateText p {
+  line-height: 1em;
+  margin-bottom: 5px;
+}
 .TableHeader {
   display: flex;
-  /* line-height: 24px; */
-  /* font-size: 16px; */
   padding: 0 10px;
-  /* justify-content: space-between;   */
   justify-content: flex-end;    
 }
 
 .TableRow {
   display: flex;
   line-height: 24px;
-  /* line-height: 8px;   */
   white-space: nowrap;
   margin: 10px 0;
-  /* margin-bottom: -20px !important; */
   padding: 10px 0px;
-  /* align-items: space-between; */
-  /* padding-left: 0; */
 }
 
 .TableRowColors {
-  /* background: #ffffff; */
-  /* border: 1px solid #e3e3e3;       */
-  /* background: #f3f2fb; */
   background: #edf2f2;
 } 
 
@@ -340,18 +264,13 @@ nav a:active {
 }
 
 .TableBorder {
-  /* border: 1px outset #f3f2fb;  */
   border: 1px outset #b3ade6;
 }
 
 .ColumnHeaders {
-  /* background-color: linen; */
-  /* line-height: 8px !important; */
   line-height: 18px !important;
   margin-bottom: -20px !important;
-  /* padding: 0px !important; */
   border: none !important;   
-
   display: flex;
   align-items: flex-end !important;
 }
@@ -372,86 +291,7 @@ nav a:active {
   margin: 10% 2% 5% 2%;
 }
 
-/*
-.FlagAndCountry {
-  display: flex; 
-} */
-
-/* .WorldResult {
-  border: 2pt solid #2F3418;
-  border-radius: 1em;
-  margin: 0.2em 4em;
-  max-width: 80%; 
-  /* padding: 0.25em 1em;
-  font-size: 1.5em; 
-} */
-
-/* .mainContent {
-  background-color: #53565d;
-} */
-
-/* .gridColumn {
-  margin-right: 1em; 
-}  */
-
-/* .row {
-  display: block;
-  justify-content: center;
-}  */
-
-/* .parentDivForCharts {
-  text-align: center;
-} */
-
-/* .flexboxForCharts {
-  display: block;
-  margin: 0 auto;
-}  */
-
-/* @media only screen and (max-width: 699px) {
-  .parentOfNationCharts {
-    display: flex; 
-    justify-content: center;
-  }
-  .NationChart {
-    flex: 1;
-  }
-} */
-
-/* @media only screen and (min-width: 1200px) {
-  .parentOfNationCharts {
-    display: flex; 
-  }
-  .NationChart {
-    flex: 1;
-  }
-} */
-
-/* .CenterTheseChartsHopefully {
-  display: flex;
-  justify-content: center;
-} */
-
-/* .LineChart {
-  margin: 1em 1em; 
-} */
-
-/* .NationChart {
-  display: flex;
-  margin: 0 auto; 
-} */
-
-/* .WorldResultColumn {
+.searchDiv {
+  margin: 5% auto;
   width: 90%;
-  margin: 0 auto; 
-} */
-
-/* p { */
-  /* max-height: 12px; */
-  /* margin: 5px 0px; */
-  /* font-size: 1em; */
-/* } */
-
-/* .App-link {
-  color: #61dafb;
-} */
+}

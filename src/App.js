@@ -3,7 +3,6 @@ import React from 'react';
 import { BrowserRouter as BR, Link, Route } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import 'semantic-ui-css/semantic.min.css';
-import { Grid } from 'semantic-ui-react';
 import './App.css';
 import { ConvertStateNameAndID, domesticPress, domesticURL, latestFromDomesticState, listData, publicHealth, requestURL, summary } from './constants';
 
@@ -58,10 +57,9 @@ class App extends React.Component {
     return axios
       .get(`${domesticPress}`)
       .then(result => {
-        const first20 = result.data.slice(0, 20);
-        const first20DescendingOrder = first20.reverse(); 
-        // console.log('first20: ' + first20DescendingOrder);
-        this.setState({ pressData: first20DescendingOrder, })
+        const first10 = result.data.slice(0, 10);
+        const first10DescendingOrder = first10.reverse(); 
+        this.setState({ pressData: first10DescendingOrder, })
       })
   }
   onChange(event) {
@@ -92,7 +90,6 @@ class App extends React.Component {
       domesticSubmitted: true,
       domesticLookupArray: USAState.concat(this.state.domesticLookupArray),
     });
-    // console.log(this.state.domesticLookupArray);
     event.preventDefault();
   }
   componentDidMount() {
@@ -133,7 +130,7 @@ class App extends React.Component {
             </header>
           </div>
 
-          <Grid columns='one'>
+          <section columns='one'>
             <Route path='/' exact>
               <Home
                 cases={ this.state.cases }
@@ -144,38 +141,36 @@ class App extends React.Component {
             </Route>
             {/* international */}
             <Route path='/track-by-nation' exact>
-              <Grid.Row id='rowForWorldResult'>
-                <Grid.Column>
-                  <div className="searchDiv">
-                    <Search
-                      onSubmit={ this.Submit }
-                      value={ this.state.lookup }
-                      onChange={ this.onChange }
-                      placeholder="Search nation"
-                    />
-                    {
-                      this.state.worldLookupArray.map(item =>
-                        <Nation
-                          name={ item }
-                          key={ item }
-                        />
-                      )
-                    }
-                  </div>
-                </Grid.Column>
-              </Grid.Row>
+              <div id='rowForWorldResult'>
+                <div className="PageLayout">
+                  <Search
+                    onChange={ this.onChange }
+                    onSubmit={ this.Submit }
+                    placeholder="Search nation"
+                    value={ this.state.lookup }
+                  />
+                  {
+                    this.state.worldLookupArray.map(item =>
+                      <Nation
+                        name={ item }
+                        key={ item }
+                      />
+                    )
+                  }
+                </div>
+              </div>
             </Route>
 
             {/* domestic */}
             <Route path='/track-by-states' exact>
-              <Grid.Row>
-                <Grid.Column>
-                  <div className="searchDiv">
+              <div>
+                <div>
+                  <div className="PageLayout">
                     <Search
-                      onSubmit={ this.DomesticSubmit }
-                      value={ this.state.domesticLookup }
                       onChange={ this.DomesticOnChange }
+                      onSubmit={ this.DomesticSubmit }
                       placeholder="Search state"
+                      value={ this.state.domesticLookup }
                     />
                     {
                       this.state.domesticLookupArray.map(item =>
@@ -186,10 +181,10 @@ class App extends React.Component {
                       )
                     }
                   </div>
-                </Grid.Column>
-              </Grid.Row>
+                </div>
+              </div>
             </Route>
-          </Grid>
+          </section>
 
           <Route path='/sort-nations' exact>
             <Sort />
@@ -210,15 +205,13 @@ class App extends React.Component {
 } // App
 
 const Search = (props) =>
-  <form onSubmit={ props.onSubmit }>
+  <form onSubmit={ props.onSubmit } className='searchDiv'>
     <div>
       <input
         type="text"
         placeholder={ props.placeholder }
         value={ props.value }
         onChange={ props.onChange }
-        array={ props.array }
-        show={ props.show }
       />
       <button type="submit" className='SubmitButton'>
         Submit
@@ -251,7 +244,6 @@ class Nation extends React.Component {
     return axios
       .get(`${listData}/${this.props.name}`)
       .then(result => {
-        // console.log(result.data);
         this.setState({
           country: result.data.country,
           flag: result.data.countryInfo.flag,
@@ -313,7 +305,6 @@ class Nation extends React.Component {
       };
       arrayPercentages.push(deathPercentageObj);
     }
-    // console.log(arrayPercentages);
     this.setState({
       timelineCases: arrayCases,
       timelineDeaths: arrayDeaths,
@@ -334,29 +325,30 @@ class Nation extends React.Component {
     const deathRecoveryRatio = ( 100 * ( deaths / ( deaths + recovered ) ) ).toFixed(2);
     return (
       <div>
-        <Grid style={{ marginTop: 1 }} >
-          <Grid.Row columns={1} style={{ maxHeight: 20 }}>
-            <Grid.Column className='ResponsiveText FlagAndCountry' >
+        <section style={{ marginTop: 1 }} >
+          <div height={{ maxHeight: 20 }}>
+            <div className='ResponsiveText FlagAndCountry' style={{ paddingLeft: 0 }}>
               <img src={ flag } alt={ flag } /><p id='NameOfNation'>{ country }</p>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row doubling columns={2}>
-            <Grid.Column className='ResponsiveText'>
-              <p>Deaths: { deaths }.</p>
+            </div>
+          </div>
+          <div style={{ display:'flex' }}
+          >
+            <div className='ResponsiveText' style={{ width: '50%' }}>
+              <p>Deaths: { deaths }</p>
               <p>Deaths today: { todayDeaths }</p>
               <p>Daily increase in death: <strong>{ deathPercentIncrease }%</strong></p>
               <p>Recoveries: { recovered }</p>
               <p>Deaths per resolved cases: { deathRecoveryRatio }%</p>
-            </Grid.Column>
-            <Grid.Column className='ResponsiveText'>
+            </div>
+            <div className='ResponsiveText' style={{ width: '50%' }}>
               <p>Cases: { cases }</p>
               <p>Cases today: { todayCases }</p>
               <p>Daily increase in cases: <strong>{ casesPercentIncrease }%</strong></p>
               <p>{ active } active cases, { critical } of which are critical</p>
               <p>Cases per million: { casesPerOneMillion }</p>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
+            </div>
+          </div>
+        </section>
         
         <Chart 
           dataSet1={ timelinePercentageIncreaseInDeath }
@@ -442,7 +434,6 @@ class USAState extends React.Component {
     this.setState({
       percentageIncreaseInCases: percentageArrayGoingToLoop,
     })
-    // console.log(this.state.percentageIncreaseInCases);
   }
   componentDidMount() {
     this.LoadStateData();
@@ -455,9 +446,9 @@ class USAState extends React.Component {
     const casesPercentIncrease = (100 * (todayCases / (cases - todayCases))).toFixed(2);
     return (
       <div>
-        <Grid columns='one' style={{ marginTop: 5 }}>
-          <Grid.Row>
-            <Grid.Column className='ResponsiveText USAStateText'>
+        <section style={{ marginTop: 5 }}>
+          <div>
+            <div className='ResponsiveText USAStateText'>
               <p>
                 In { state }, as of { readableDateChecked } there have been <strong>{ cases }</strong> confirmed cases out of { totalTested } tests
               </p>
@@ -474,7 +465,7 @@ class USAState extends React.Component {
               }
               {
                 hospitalized ?
-                  <p>{ hospitalized } are hospitalized. </p>
+                  <p>{ hospitalized } are hospitalized</p>
                   : null
               }
               <p>
@@ -486,9 +477,9 @@ class USAState extends React.Component {
               <p>
                 Daily increase in deaths: <strong>{ deathPercentIncrease }%</strong>
               </p>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
+            </div>
+          </div>
+        </section>
 
         <Chart 
           dataSet1={ percentageIncreaseInCases }
@@ -775,16 +766,16 @@ class PublicHealth extends React.Component {
 const Home = (props) =>
   <div>
   {/*|^|^| parent div */}
-    <Grid.Row>
-      <Grid.Column>
+    <div>
+      <div>
         <div className='CenteredPageContent HomePageFontSize'>
           <p>Worldwide there have been { props.cases.toLocaleString("en-US") } cases, { props.deaths.toLocaleString("en-US") } deaths, and { props.recovered.toLocaleString("en-US") } recoveries from COVID-19.</p>
           <p>Use the links above to see how the virus is affecting different states and nations, and access state-level public health information.</p>
         </div>
-      </Grid.Column>
-    </Grid.Row>
-    <Grid.Row>
-      <Grid.Column>
+      </div>
+    </div>
+    <div>
+      <div>
         <div className='CenteredNewsContent'>
           <h3>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -794,8 +785,8 @@ const Home = (props) =>
             listOfArticles={ props.pressData }
           />
         </div>
-      </Grid.Column>
-    </Grid.Row>
+      </div>
+    </div>
   {/*\v/\v/ parent div  */} 
   </div>
 
